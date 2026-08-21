@@ -70,7 +70,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
   const [customNickname, setCustomNickname] = useState<string | null>(null);
 
-  const activeChild = children.find((c: any) => c.id === activeChildId) || children[0];
+  const activeChild = children.find((child: any) => child.id === activeChildId) || children[0];
   const childName = customNickname !== null ? customNickname : (activeChild?.nickname || activeChild?.name || sessionStorage.getItem('childName') || childData.profile.name);
   const childLevel = activeChild?.level || childData.profile.level;
   const childXp = activeChild?.xp || childData.profile.xp;
@@ -79,11 +79,11 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const _childStreak = activeChild?.streak || childData.profile.streak;
   const childAvatar = selectedAvatar !== null ? selectedAvatar : (activeChild?.photo || activeChild?.avatar || childData.profile.avatar);
 
-  const childGoals = goals.filter((g: any) => g.childId === activeChildId);
-  const _inProgressGoals = childGoals.filter((g: any) => g.status === 'in_progress' || g.status === 'not_started');
-  const _achievedGoals = childGoals.filter((g: any) => g.status === 'achieved');
+  const childGoals = goals.filter((goal: any) => goal.childId === activeChildId);
+  const _inProgressGoals = childGoals.filter((goal: any) => goal.status === 'in_progress' || goal.status === 'not_started');
+  const _achievedGoals = childGoals.filter((goal: any) => goal.status === 'achieved');
 
-  const d = childData;
+  const defaultChildData = childData;
   const isRTL = lang === 'ar';
 
   const themeColors = [
@@ -94,7 +94,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     { id: 'amber', name: 'Amber', hex: '#FFA660', class: 'bg-[#FFA660]', text: 'text-[#FFA660]', border: 'border-[#FFA660]', softBg: 'bg-amber-100/60', ring: 'ring-[#FFA660]', bgOuter: 'bg-[#FAFAFD] text-[#2A2B47]' },
     { id: 'teal', name: 'Teal', hex: '#70E4BE', class: 'bg-[#70E4BE]', text: 'text-[#0D9488]', border: 'border-[#70E4BE]', softBg: 'bg-teal-100/60', ring: 'ring-[#70E4BE]', bgOuter: 'bg-[#FAFAFD] text-[#2A2B47]' },
   ];
-  const currentTheme = themeColors.find(c => c.id === (selectedThemeId || activeChild?.themeColor)) || themeColors[0];
+  const currentTheme = themeColors.find(themeColor => themeColor.id === (selectedThemeId || activeChild?.themeColor)) || themeColors[0];
 
   const [isRecording, setIsRecording] = useState(false);
   const [isCameraMinimized, setIsCameraMinimized] = useState(false);
@@ -195,11 +195,11 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     }
     return () => clearInterval(interval);
   }, [isRecording, isSessionEnded]);
-  
+
   const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    const minutes = Math.floor(seconds / 60);
+    const secondsPart = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secondsPart.toString().padStart(2, '0')}`;
   };
 
   const t = {
@@ -1260,7 +1260,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
             <Globe className="w-4 h-4" />
           </button>
           <button 
-            onClick={() => { const m = toggleAudioMute(); setIsMuted(m); }}
+            onClick={() => { const newMuteState = toggleAudioMute(); setIsMuted(newMuteState); }}
             className="p-2.5 bg-[#FAFAFD] text-[#633BE8] rounded-2xl border border-[#ECE8FD] hover:bg-[#ECE8FD] transition-colors"
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}

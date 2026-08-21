@@ -51,27 +51,27 @@ export function Chatbot() {
   ];
 
   const getAiResponse = (query: string): string => {
-    const q = query.toLowerCase();
+    const normalizedQuery = query.toLowerCase();
     
-    if (q.includes('speech') || q.includes('language') || q.includes('كلام') || q.includes('تواصل')) {
+    if (normalizedQuery.includes('speech') || normalizedQuery.includes('language') || normalizedQuery.includes('كلام') || normalizedQuery.includes('تواصل')) {
       return lang === 'ar'
         ? `لتطوير مهارات الكلام لدى ${childName}:\n1. استخدم جمل قصيرة ومحددة من 2-3 كلمات.\n2. كرّر الكلمات أثناء الأنشطة اليومية مثل الإفطار واللعب.\n3. امنح الطفل 5 ثوانٍ للاستجابة قبل التكرار.`
         : `To enhance ${childName}'s speech & language skills:\n1. Use clear 2-3 word sentences during daily routines.\n2. Repeat key action words during mealtime and play.\n3. Give ${childName} at least 5 seconds to process and respond.`;
     }
     
-    if (q.includes('token') || q.includes('star') || q.includes('نجم') || q.includes('تعزيز') || q.includes('مكافأ')) {
+    if (normalizedQuery.includes('token') || normalizedQuery.includes('star') || normalizedQuery.includes('نجم') || normalizedQuery.includes('تعزيز') || normalizedQuery.includes('مكافأ')) {
       return lang === 'ar'
         ? `نصائح نجاح لوحة التعزيز:\n1. حدد هدفاً واضحاً ومباشراً (مثل: ترتيب الألعاب).\n2. امنح النجمة فور وقوع السلوك الإيجابي مباشرة.\n3. اجعل المكافأة المكتسبة مرئية ومشجعة للطفل.`
         : `Token Board success tips:\n1. Define a single, positive action target (e.g. packing up toys).\n2. Award the star immediately following the positive behavior.\n3. Keep the visual reward clear and reachable!`;
     }
     
-    if (q.includes('calm') || q.includes('sensory') || q.includes('هدوء') || q.includes('حسي')) {
+    if (normalizedQuery.includes('calm') || normalizedQuery.includes('sensory') || normalizedQuery.includes('هدوء') || normalizedQuery.includes('حسي')) {
       return lang === 'ar'
         ? `تقنيات الاستجابة الحسية والاسترخاء:\n1. تمارين الضغط اللطيف على الكتفين والذراعين.\n2. الاستماع لأصوات الطبيعة الهادئة في بيئة قليلة المشتتات.\n3. استخدام الألعاب الحسية ذات الملمس الناعم.`
         : `Sensory calming techniques for ${childName}:\n1. Try gentle deep-pressure shoulder compresses.\n2. Use a low-distraction quiet corner with soft ambient sounds.\n3. Provide textured sensory toys for tactile grounding.`;
     }
 
-    if (q.includes('routine') || q.includes('schedule') || q.includes('روتين') || q.includes('جدول')) {
+    if (normalizedQuery.includes('routine') || normalizedQuery.includes('schedule') || normalizedQuery.includes('روتين') || normalizedQuery.includes('جدول')) {
       return lang === 'ar'
         ? `لتنظيم الروتين الصباحي:\n1. استخدم الجداول البصرية المصورة بالترتيب.\n2. حدد أوقات ثابته للاستيقاظ والأنشطة.\n3. عزز الطفل بعد كل خطوة منجزة بنجاح.`
         : `For structured daily routines:\n1. Utilize a visual schedule with clear sequential pictures.\n2. Set consistent wake-up, meal, and exercise times.\n3. Offer praise after each successfully completed step.`;
