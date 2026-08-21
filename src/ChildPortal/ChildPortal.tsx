@@ -1201,7 +1201,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
             <div className="flex items-end gap-2">
               <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-sm flex-shrink-0">👩</div>
               <div className="bg-slate-100 p-4 rounded-2xl rounded-bl-sm text-slate-800 max-w-[80%]">
-                I'm so proud of you! Keep up the good work! ❤️
+                I&apos;m so proud of you! Keep up the good work! ❤️
               </div>
             </div>
           </div>
@@ -1210,7 +1210,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
             <div className="flex gap-2 overflow-x-auto pb-3 mb-3 border-b border-slate-200">
               <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">❤️ Thank you</button>
               <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">👍 Okay!</button>
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">😊 I'm happy!</button>
+              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">😊 I&apos;m happy!</button>
               <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">🎉 I did it!</button>
               <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">❓ I need help</button>
             </div>
@@ -1531,7 +1531,7 @@ const renderProgress = () => (
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
           <div className="text-8xl">🏆</div>
           <div>
-            <h3 className="text-3xl font-extrabold mb-2">You're doing amazing!</h3>
+            <h3 className="text-3xl font-extrabold mb-2">You&apos;re doing amazing!</h3>
             <p className="text-purple-100 font-medium text-lg mb-4">
               Your parents and therapists are so proud of you. Keep playing, learning, and growing!
             </p>
