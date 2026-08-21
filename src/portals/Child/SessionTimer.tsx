@@ -12,7 +12,7 @@ export default function SessionTimer({ onTimeUp }: { onTimeUp?: () => void }) {
   useEffect(() => {
     if (timeLeft <= 0) {
       if (onTimeUp) onTimeUp();
-      return;
+      return null;
     }
     
     const timer = setInterval(() => {
