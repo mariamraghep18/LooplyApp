@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ViewState } from '../types';
-import { ArrowRight, Plus, Target, Star, TrendingUp, Clock, X, Heart, Download } from 'lucide-react';
+import { ArrowRight, Plus, Target, Star, TrendingUp, X, Download } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
@@ -9,7 +9,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-  const { sessions, children, activeChildId, setActiveChildId, goals, parentProfile, addChild } = useSharedData() as any;
+  const { children, activeChildId, setActiveChildId, goals, parentProfile, addChild } = useSharedData() as any;
   const { lang } = useLanguage();
   const activeChild = children.find((c: any) => c.id === activeChildId) || children[0];
   const [showAddChild, setShowAddChild] = useState(false);
@@ -49,7 +49,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     setNewChildPin('');
     setNewChildDetermination(lang === 'ar' ? 'طيف التوحد (Autism)' : 'Autism Spectrum');
   };
-  const firstChildName = activeChild?.nickname || activeChild?.name || (lang === 'ar' ? 'طفلك' : 'Your Child');
   
   const activeGoalsCount = goals.filter((g: any) => g.childId === activeChild?.id && g.status !== 'mastered').length;
   const masteredSkillsCount = goals.filter((g: any) => g.childId === activeChild?.id && g.progress >= g.target).length;
@@ -60,17 +59,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { name: 'Medical_Assessment_2026.pdf', type: 'Medical Assessment', size: '1.2 MB' },
     { name: 'Dr_Consultation_Report.pdf', type: 'Doctor Consultation', size: '850 KB' }
   ]);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setUploadedFiles(prev => [...prev, {
-        name: file.name,
-        type: 'Medical Document',
-        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`
-      }]);
-    }
-  };
 
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));

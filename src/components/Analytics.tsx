@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { BarChart3, FileText, PieChart as PieChartIcon, TrendingUp, Download, Award, Target, Calendar, UserIcon, Clock, Video, PlayCircle } from 'lucide-react';
+import { PieChart as PieChartIcon, TrendingUp, Award, Target, Calendar } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function Report() {
-  const { children, sessions } = useSharedData();
+  const { children } = useSharedData();
   const { lang } = useLanguage();
   const firstChildName = children[0]?.name || (lang === 'ar' ? 'الطفل' : 'the child');
   const [specialistType, setSpecialistType] = useState('All');

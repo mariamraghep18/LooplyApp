@@ -1,7 +1,6 @@
 import React, { useState, useEffect, DragEvent } from 'react';
 import { ArrowLeft, Check, Sparkles, Droplets, Wind, GripVertical } from 'lucide-react';
 import { useLanguage } from '../../../shared/LanguageContext';
-import { useSharedData } from '../../../shared/SharedData';
 import { playAudioFeedback, speakVoice } from '../../../shared/audio';
 import confetti from 'canvas-confetti';
 
@@ -11,7 +10,7 @@ interface HandWashingGameProps {
 }
 
 export default function HandWashingGame({ onBack, onComplete }: HandWashingGameProps) {
-  const { lang, t: tGlobal } = useLanguage();
+  const { lang } = useLanguage();
   
   const correctOrder = [
     { id: 'water', icon: '🚰', title: lang === 'en' ? 'Turn on water' : 'افتح الماء', color: 'bg-sky-100', border: 'border-sky-300' },

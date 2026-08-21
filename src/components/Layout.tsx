@@ -1,9 +1,18 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { ViewState } from '../types';
-import { 
-  Heart, LogOut, Download, MapPin, GraduationCap, ClipboardList, 
-  LayoutDashboard, Target, Calendar as CalendarIcon, Activity, 
-  MessageCircle, Star, MoreHorizontal, Settings, CreditCard, ShoppingBag, CheckSquare, Video, PieChart, Users, User, Globe 
+import {
+  LogOut,
+  MapPin,
+  LayoutDashboard,
+  Target,
+  Calendar as CalendarIcon,
+  MessageCircle,
+  Star,
+  CreditCard,
+  ShoppingBag,
+  PieChart,
+  User,
+  Globe
 } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
@@ -16,9 +25,8 @@ interface LayoutProps {
 }
 
 export function Layout({ currentView, onNavigate, onLogout, children }: LayoutProps) {
-  const { parentProfile, familyChildren, activeChildId, appThemeColor } = useSharedData() as any;
+  const { parentProfile } = useSharedData() as any;
   const { lang, setLang } = useLanguage();
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const tabs = [
     { view: 'dashboard', label: lang === 'ar' ? 'الرئيسية' : 'Dashboard', icon: LayoutDashboard },

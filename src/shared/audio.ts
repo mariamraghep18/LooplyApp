@@ -1,5 +1,3 @@
-const audioCache: Record<string, HTMLAudioElement> = {};
-
 const SOUND_URLS = {
   win: 'https://actions.google.com/sounds/v1/cartoon/ta_da.ogg',
   lose: 'https://actions.google.com/sounds/v1/cartoon/slide_whistle_down.ogg',
