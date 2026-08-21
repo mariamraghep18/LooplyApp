@@ -185,7 +185,6 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
                setIsSessionEnded(true);
                setPlayingGame(null);
                setCurrentView('dashboard');
-               alert(lang === 'en' ? "Time's up for today! Your session is locked." : "انتهى وقت اليوم! تم قفل الجلسة.");
             }
             return 0;
           }
@@ -1027,8 +1026,6 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
       if (childCoins >= selectedReward.price && !selectedReward.owned) {
         buyReward(activeChildId, selectedReward.id);
         setShowRewardModal(false);
-      } else {
-        alert(lang === 'en' ? 'Not enough coins!' : 'لا تملك عملات كافية!');
       }
     };
 

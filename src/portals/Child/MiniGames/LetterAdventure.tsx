@@ -23,7 +23,8 @@ export default function LetterAdventure({ onBack, onComplete }: { onBack: () => 
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Speech Recognition is not supported in this browser.");
+      setFeedback('error');
+      speakVoice(lang === 'en' ? 'Speech recognition is not supported' : 'التعرف الصوتي غير مدعوم', lang);
       return;
     }
     const recognition = new SpeechRecognition();

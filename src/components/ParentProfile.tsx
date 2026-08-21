@@ -255,7 +255,8 @@ export function ParentProfile({ onBack }: { onBack: () => void }) {
                     updateChild(activeChildId, { pin: newPin });
                     setShowPinModal(false);
                     setNewPin('');
-                    alert(lang === 'ar' ? 'تم تحديث رمز PIN بنجاح!' : 'Child PIN updated successfully!');
+                    setSaveSuccess(true);
+                    setTimeout(() => setSaveSuccess(false), 3000);
                   }
                 }} 
                 className="flex-1 py-3 bg-[#633BE8] text-white font-black rounded-xl hover:bg-[#9C7AF2] transition-colors"

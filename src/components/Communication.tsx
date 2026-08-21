@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { Send, Search, Users, MessageSquare, HelpCircle, X, Plus } from 'lucide-react';
+=======
+import React, { useState } from 'react';
+import { Send, Search, Users, MessageSquare, UserPlus, HelpCircle, BookOpen, LifeBuoy, PhoneCall, ShieldCheck, ChevronRight, Clock, X, Plus } from 'lucide-react';
+import { useSharedData } from '../shared/SharedData';
+>>>>>>> 6c06be4 (Fix remaining issues locally)
 import { useLanguage } from '../shared/LanguageContext';
 
 export function CommunityMessages() {

@@ -22,12 +22,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [newChildPin, setNewChildPin] = useState('');
   const [newChildDetermination, setNewChildDetermination] = useState(lang === 'ar' ? 'طيف التوحد (Autism)' : 'Autism Spectrum');
 
+  const [formError, setFormError] = useState('');
+
   const handleAddChild = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newChildName || !newChildAge || !newChildGrade || !newChildSchool) {
-      alert(lang === 'ar' ? "يرجى ملء جميع الحقول المطلوبة" : "Please fill all required fields");
+      setFormError(lang === 'ar' ? "يرجى ملء جميع الحقول المطلوبة" : "Please fill all required fields");
       return;
     }
+    setFormError('');
     const newId = addChild({
       name: newChildName,
       nickname: newChildName.split(' ')[0],
@@ -217,6 +220,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
 
             <form onSubmit={handleAddChild} className="p-6 space-y-4 text-left overflow-y-auto flex-1">
+              {formError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-extrabold flex items-center gap-2">
+                  ⚠️ <span>{formError}</span>
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-extrabold text-[#2A2B47] mb-1">{lang === 'ar' ? 'الاسم بالكامل' : 'Full Name'}</label>
                 <input required type="text" value={newChildName} onChange={e => setNewChildName(e.target.value)} className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold" placeholder="e.g. Sarah Smith" />

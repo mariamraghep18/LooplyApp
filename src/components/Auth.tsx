@@ -311,16 +311,19 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
     }
   };
 
+  const [authError, setAuthError] = useState('');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.email !== formData.confirmEmail) {
-      alert(lang === 'ar' ? "البريد الإلكتروني وتأكيد البريد غير متطابقين" : "Email addresses do not match");
+      setAuthError(lang === 'ar' ? "البريد الإلكتروني وتأكيد البريد غير متطابقين" : "Email addresses do not match");
       return;
     }
     if (formData.password !== formData.confirmPassword) {
-      alert(lang === 'ar' ? "كلمة المرور غير متطابقة" : "Passwords do not match");
+      setAuthError(lang === 'ar' ? "كلمة المرور غير متطابقة" : "Passwords do not match");
       return;
     }
+    setAuthError('');
     
     const finalDetermination = formData.determinationType === 'Other' || formData.determinationType === 'أخرى'
       ? (formData.customDetermination || 'Custom Special Need') 
@@ -407,6 +410,11 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
         {/* Form Card */}
         <div className="bg-white rounded-[24px] p-6 sm:p-8 shadow-[0_8px_20px_rgba(107,56,212,0.12)] border border-[#E9DDFF] space-y-6">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {authError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-extrabold flex items-center gap-2">
+                ⚠️ <span>{authError}</span>
+              </div>
+            )}
             
             {/* Input: Full Name */}
             <div>
