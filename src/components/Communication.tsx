@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { Send, Search, Users, MessageSquare, HelpCircle, X, Plus } from 'lucide-react';
-import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function CommunityMessages() {
-  const { children } = useSharedData() as any;
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState<'community' | 'help' | 'messages'>('community');
   const [activeChatIndex, setActiveChatIndex] = useState(0);
