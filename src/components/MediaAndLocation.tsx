@@ -1,4 +1,4 @@
-import { PlayCircle, Video } from 'lucide-react';
+import { PlayCircle, Video, MapPin, Navigation } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
+import { Star, Plus, Trophy, X } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 

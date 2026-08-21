@@ -5,7 +5,7 @@ import {
   Star, Trophy, Play, CheckCircle,
   Map, Target, Calendar, Gamepad2, Gift, LayoutDashboard,
   LogOut, Settings as SettingsIcon, X, Check,
-  ChevronRight, Zap, Globe, User, Camera, ListTodo, Volume2, VolumeX
+  ChevronRight, Zap, Globe, User, Camera, ListTodo, Volume2, VolumeX, Lock
 } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 import { useSharedData } from '../shared/SharedData';
@@ -39,6 +39,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const [showToast, setShowToast] = useState(false);
   const [sessionComplete, _setSessionComplete] = useState(false);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
+  const [showLockedModal, setShowLockedModal] = useState(false);
   const [showWinModal, setShowWinModal] = useState(false);
   const [winStats, _setWinStats] = useState({ xp: 0, coins: 0, gems: 0 });
 
@@ -172,6 +173,12 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   }, [activeChildId]);
 
   useEffect(() => {
+    if (isRecording && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [isRecording, isCameraMinimized]);
+
+  useEffect(() => {
     let interval: any;
     if (isRecording) {
       interval = setInterval(() => {
@@ -183,6 +190,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
             }
             if (!isSessionEnded) {
                setIsSessionEnded(true);
+               setShowLockedModal(true);
                setPlayingGame(null);
                setCurrentView('dashboard');
             }
@@ -268,7 +276,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
       { id: 'daily', label: lang === 'en' ? '🏠 Daily Life' : '🏠 الحياة اليومية' },
     ];
     
-    const filteredGames = gameCategory === 'all' ? d.games : d.games.filter(g => g.category === gameCategory);
+    const filteredGames = gameCategory === 'all' ? childData.games : childData.games.filter(g => g.category === gameCategory);
 
     return (
       <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans">
@@ -306,7 +314,14 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
           {filteredGames.length > 0 ? filteredGames.map((game) => (
             <div 
               key={game.id} 
-              onClick={() => { setPlayingGame(game); setGameStep('intro'); playAudioFeedback('click'); }}
+              onClick={() => {
+                if (isSessionEnded) {
+                  setShowLockedModal(true);
+                  return;
+                }
+                setPlayingGame(game);
+                playAudioFeedback('click');
+              }}
               className="bg-white rounded-3xl p-5 border border-[#ECE8FD] shadow-xs hover:border-[#633BE8] transition-all flex flex-col justify-between cursor-pointer group"
             >
               <div>
@@ -865,7 +880,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     <div className="space-y-6">
       <h2 className="text-3xl font-extrabold text-slate-800">{t.achievements} 🏆</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {d.achievements.map((ach) => (
+        {childData.achievements.map((ach) => (
           <div key={ach.id} className={`bg-white rounded-3xl p-4 sm:p-6 border-2 flex items-center gap-4 ${ach.locked ? 'border-slate-100 opacity-50' : 'border-amber-200 shadow-md'}`}>
             <div className={`w-16 h-16 shrink-0 rounded-full flex items-center justify-center text-3xl ${ach.locked ? 'bg-slate-100' : 'bg-amber-100 border-[3px] border-amber-200'}`}>
               {ach.icon}
@@ -1388,7 +1403,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
         <div className="grid grid-cols-2 gap-3">
           <div 
             onClick={() => {
-              setPlayingGame(d.games.find(g => g.category === 'sel'));
+              setPlayingGame(childData.games.find(g => g.category === 'sel'));
               setCurrentView('games');
             }}
             className="bg-white rounded-3xl p-5 border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#FF6086] transition-all"
@@ -1400,7 +1415,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
 
           <div 
             onClick={() => {
-              setPlayingGame(d.games.find(g => g.category === 'cognitive'));
+              setPlayingGame(childData.games.find(g => g.category === 'cognitive'));
               setCurrentView('games');
             }}
             className="bg-white rounded-3xl p-5 border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#FFA660] transition-all"
@@ -1474,7 +1489,7 @@ const renderProgress = () => (
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="text-3xl font-extrabold text-slate-800">My Progress 🚀</h2>
         <div className="bg-purple-100 text-purple-700 px-6 py-3 rounded-full font-bold flex items-center gap-2 text-lg shadow-sm">
-          Level {d.profile.level} Explorer
+          Level {childData.profile.level} Explorer
         </div>
       </div>
 
@@ -1708,7 +1723,7 @@ const renderProgress = () => (
               </h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {d.achievements.map((ach) => (
+              {childData.achievements.map((ach) => (
                 <div key={ach.id} className={`bg-white p-3 rounded-xl border flex items-center gap-3 ${ach.locked ? 'opacity-60 border-[#ECE8FD]' : 'border-[#FFA660]/30 shadow-xs'}`}>
                   <span className="text-2xl">{ach.icon}</span>
                   <div>
@@ -1966,16 +1981,44 @@ const renderProgress = () => (
       
       {showWinModal && (
         <GameWinModal 
-           score={100} 
            xp={winStats.xp} 
            coins={winStats.coins} 
-           gems={winStats.gems}
            onHome={() => {
               setShowWinModal(false);
               setPlayingGame(null);
               setCurrentView('dashboard');
            }}
         />
+      )}
+
+      {showLockedModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fade-in font-sans">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-purple-200 space-y-5">
+            <div className="w-20 h-20 bg-purple-100 border-4 border-purple-300 rounded-full flex items-center justify-center mx-auto text-purple-600 shadow-inner">
+              <Lock className="w-10 h-10" />
+            </div>
+
+            <h3 className="text-2xl font-black text-[#2A2B47]">
+              {lang === 'ar' ? 'انتهى وقت الألعاب لليوم! 🔒' : "Today's Game Time Completed! 🔒"}
+            </h3>
+
+            <div className="bg-[#FAFAFD] p-4 rounded-2xl border border-[#ECE8FD] text-xs font-semibold text-[#73758C] leading-relaxed">
+              {lang === 'ar' 
+                ? 'أكملت جلسة الألعاب والأنشطة لمدة 20 دقيقة بنجاح! تم حفظ تسجيل الفيديو وتقييم الجلسة للوالدين. عد غداً لمزيد من المغامرات الرائعة 🌟'
+                : 'You have completed your 20-minute game session! Video recording has been saved for your parents. Come back tomorrow for more adventures 🌟'}
+            </div>
+
+            <button
+              onClick={() => {
+                setShowLockedModal(false);
+                setCurrentView('dashboard');
+              }}
+              className="w-full py-3.5 bg-[#633BE8] text-white rounded-2xl font-black hover:bg-[#9C7AF2] transition-all shadow-md text-sm flex items-center justify-center gap-2"
+            >
+              {lang === 'ar' ? 'العودة للرئيسية 🏠' : 'Back to Home 🏠'}
+            </button>
+          </div>
+        </div>
       )}
 
 </main>
@@ -2047,6 +2090,10 @@ const renderProgress = () => (
               <button 
                 key={item.id}
                 onClick={() => {
+                  if (item.id === 'games' && isSessionEnded) {
+                    setShowLockedModal(true);
+                    return;
+                  }
                   setCurrentView(item.id as View);
                   playAudioFeedback('click');
                   speakVoice(item.label, lang);

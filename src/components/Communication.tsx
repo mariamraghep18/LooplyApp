@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import { useState } from 'react';
-import { Send, Search, Users, MessageSquare, HelpCircle, X, Plus } from 'lucide-react';
-=======
 import React, { useState } from 'react';
 import { Send, Search, Users, MessageSquare, UserPlus, HelpCircle, BookOpen, LifeBuoy, PhoneCall, ShieldCheck, ChevronRight, Clock, X, Plus } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
->>>>>>> 6c06be4 (Fix remaining issues locally)
 import { useLanguage } from '../shared/LanguageContext';
 
 export function CommunityMessages() {
@@ -259,7 +254,7 @@ export function CommunityMessages() {
 
           {/* Posts / Talking Ports List */}
           <div className="space-y-4">
-            {talkingPortsList.map((post, i) => (
+            {talkingPortsList.map((post: any, i: number) => (
               <div key={post.id || i} className="bg-white rounded-3xl p-6 border border-[#ECE8FD] shadow-xs hover:border-[#633BE8] transition-all space-y-3">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                   <div className="flex items-center gap-3">
@@ -335,7 +330,7 @@ export function CommunityMessages() {
                   required 
                   type="text" 
                   value={newPortTitle} 
-                  onChange={e => setNewPortTitle(e.target.value)} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPortTitle(e.target.value)} 
                   className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold" 
                   placeholder={lang === 'ar' ? 'مثال: روتين الجمل اليومية وتطوير النطق' : 'e.g. Daily Speech & Vocabulary Routine'} 
                 />
@@ -348,7 +343,7 @@ export function CommunityMessages() {
                   </label>
                   <select 
                     value={newPortCategory} 
-                    onChange={e => setNewPortCategory(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewPortCategory(e.target.value)}
                     className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold"
                   >
                     <option value={lang === 'ar' ? 'الكلام والتواصل' : 'Speech & Language'}>{lang === 'ar' ? 'الكلام والتواصل' : 'Speech & Language'}</option>
@@ -367,7 +362,7 @@ export function CommunityMessages() {
                     required 
                     type="time" 
                     value={newPortTime} 
-                    onChange={e => setNewPortTime(e.target.value)} 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPortTime(e.target.value)} 
                     className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-extrabold" 
                   />
                 </div>
@@ -385,7 +380,7 @@ export function CommunityMessages() {
                 </label>
                 <textarea 
                   value={newPortSnippet} 
-                  onChange={e => setNewPortSnippet(e.target.value)} 
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPortSnippet(e.target.value)} 
                   className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold min-h-[80px]" 
                   placeholder={lang === 'ar' ? 'اكتب باختصار محتوى هذا الـ Talking Port...' : 'Enter details about this Talking Port...'}
                 />

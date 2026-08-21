@@ -8,7 +8,7 @@ interface LanguageContextType {
   t: (key: string) => any;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>();
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const translations = {
   en: {
@@ -82,7 +82,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, translate }}>
+    <LanguageContext.Provider value={{ lang, setLang, t: translate, translate } as any}>
       {children}
     </LanguageContext.Provider>
   );

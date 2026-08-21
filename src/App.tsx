@@ -35,17 +35,17 @@ export default function App() {
   const renderSelectionAndAuth = () => {
     switch (currentView) {
       case 'welcome':
-        return <WelcomeScreen onNavigate={setCurrentView} />;
+        return <WelcomeScreen onNavigate={(v: any) => setCurrentView(v)} />;
       case 'portal-selection':
-        return <PortalSelection onNavigate={setCurrentView} />;
+        return <PortalSelection onNavigate={(v: any) => setCurrentView(v)} />;
       case 'family-selection':
-        return <FamilySelection onNavigate={setCurrentView} />;
+        return <FamilySelection onNavigate={(v: any) => setCurrentView(v)} />;
       case 'child-welcome':
-        return <ChildWelcome onNavigate={setCurrentView} />;
+        return <ChildWelcome onNavigate={(v: any) => setCurrentView(v)} />;
       case 'login':
-        return <Login onLogin={handleLogin} onNavigate={setCurrentView} />;
+        return <Login onLogin={handleLogin} onNavigate={(v: any) => setCurrentView(v)} />;
       case 'register':
-        return <CreateAccount onNavigate={setCurrentView} />;
+        return <CreateAccount onNavigate={(v: any) => setCurrentView(v)} />;
       case 'child-portal':
         return <ChildPortal onLogout={handleLogout} />;
       default:
