@@ -127,7 +127,7 @@ interface SharedDataContextType {
   setAppThemeColor: (color: string) => void;
 }
 
-const SharedDataContext = createContext<SharedDataContextType | undefined>(undefined);
+const SharedDataContext = createContext<SharedDataContextType | undefined>();
 
 export function SharedDataProvider({ children: reactChildren }: { children: ReactNode }) {
   const [parentProfile, setParentProfile] = useState<ParentProfile | null>(null);
