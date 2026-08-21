@@ -19,6 +19,15 @@ export default function MemoryMatch({ onBack, onComplete }: { onBack: () => void
     setCards(deck);
   }, []);
 
+  const MESSAGE_MAP: Record<'match' | 'mismatch', Record<string, string>> = {
+    match: { en: 'Match!', ar: 'تطابق!' },
+    mismatch: { en: 'Try again', ar: 'حاول مرة أخرى' }
+  };
+  const AUDIO_MAP: Record<'match' | 'mismatch', string> = {
+    match: 'success',
+    mismatch: 'error'
+  };
+
   const handleCardClick = (index: number) => {
     if (flippedIndices.length === 2 || cards[index].isFlipped || cards[index].isMatched) return;
 
@@ -32,19 +41,28 @@ export default function MemoryMatch({ onBack, onComplete }: { onBack: () => void
 
     if (newFlippedIndices.length === 2) {
       const [firstIdx, secondIdx] = newFlippedIndices;
-      if (cards[firstIdx].emoji === cards[secondIdx].emoji) {
-        // Match
-        setTimeout(() => {
-          playAudioFeedback('success');
-          speakVoice(lang === 'en' ? 'Match!' : 'تطابق!', lang);
-          const matchedCards = [...newCards];
-          matchedCards[firstIdx].isMatched = true;
-          matchedCards[secondIdx].isMatched = true;
-          setCards(matchedCards);
-          setFlippedIndices([]);
-          
-          if (matchedCards.every(c => c.isMatched)) {
-             confetti({ particleCount: 100, spread: 70 });
+      const isMatch = cards[firstIdx].emoji === cards[secondIdx].emoji;
+      setTimeout(() => {
+        const key = isMatch ? 'match' : 'mismatch';
+        playAudioFeedback(AUDIO_MAP[key]);
+        speakVoice(MESSAGE_MAP[key][lang], lang);
+        const updatedCards = [...newCards];
+        if (isMatch) {
+          updatedCards[firstIdx].isMatched = true;
+          updatedCards[secondIdx].isMatched = true;
+        } else {
+          updatedCards[firstIdx].isFlipped = false;
+          updatedCards[secondIdx].isFlipped = false;
+        }
+        setCards(updatedCards);
+        setFlippedIndices([]);
+        if (isMatch && updatedCards.every(c => c.isMatched)) {
+          confetti({ particleCount: 100, spread: 70 });
+          onComplete(updatedCards.length / 2);
+        }
+      }, 1000);
+    }
+  };
              setTimeout(() => onComplete(100), 2000);
           }
         }, 500);

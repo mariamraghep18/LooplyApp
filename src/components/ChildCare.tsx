@@ -7,12 +7,24 @@ export function Plan() {
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState<'home' | 'therapeutics'>('home');
   const [statusFilter, setStatusFilter] = useState<'inprogress' | 'achieved'>('inprogress');
+  const labels: Record<'ar' | 'en', { title: string; home: string; therapeutics: string }> = {
+    ar: {
+      title: 'مهام الطفل والتحصيل (Tasks)',
+      home: 'الأهداف المنزلية',
+      therapeutics: 'العلاج',
+    },
+    en: {
+      title: "Child's Tasks & Goals",
+      home: 'Home Goals',
+      therapeutics: 'Therapeutics',
+    },
+  };
 
   return (
     <div className="space-y-6 animate-fade-in font-sans" style={{ backgroundColor: '#FAFAFD' }}>
       <div className="flex justify-between items-center border-b border-[#ECE8FD] pb-4">
         <h2 className="text-2xl font-black text-[#2A2B47]">
-          {lang === 'ar' ? 'مهام الطفل والتحصيل (Tasks)' : "Child's Tasks & Goals"}
+          {labels[lang].title}
         </h2>
       </div>
 
@@ -22,12 +34,14 @@ export function Plan() {
             onClick={() => setActiveTab('home')}
             className={`px-6 py-2.5 rounded-xl font-extrabold text-xs transition-all ${activeTab === 'home' ? 'bg-[#633BE8] text-white shadow-xs' : 'text-[#73758C] hover:bg-[#ECE8FD]'}`}
           >
-            {lang === 'ar' ? 'الأهداف المنزلية' : 'Home Goals'}
+            {labels[lang].home}
           </button>
           <button 
             onClick={() => setActiveTab('therapeutics')}
             className={`px-6 py-2.5 rounded-xl font-extrabold text-xs transition-all ${activeTab === 'therapeutics' ? 'bg-[#633BE8] text-white shadow-xs' : 'text-[#73758C] hover:bg-[#ECE8FD]'}`}
           >
+            {labels[lang].therapeutics}
+          </button>
             {lang === 'ar' ? 'أهداف التأهيل والعلاج' : 'Therapy & Rehab Goals'}
           </button>
         </div>
@@ -96,18 +110,19 @@ export function TokenBoards() {
 
   const handleAdd = (e: FormEvent) => {
     e.preventDefault();
-    if (!childId && children.length > 0) {
-      setChildId(children[0].id);
-    }
-
+    const defaultChild = children[0]?.id || '';
+    const selectedChild = childId || defaultChild;
     const [hoursStr, minutesStr] = boardTime.split(':');
-    let hours = parseInt(hoursStr || '10', 10);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
-    const formattedTime = `${String(hours).padStart(2, '0')}:${minutesStr || '00'} ${ampm}`;
+    const hoursNum = parseInt(hoursStr || '10', 10);
+    const hours12 = hoursNum % 12 || 12;
+    const periodMap: Record<boolean, string> = {
+      true: 'PM',
+      false: 'AM',
+    };
+    const formattedTime = `${String(hours12).padStart(2, '0')}:${minutesStr || '00'} ${periodMap[hoursNum >= 12]}`;
 
     addTokenBoard({
-      childId: childId || (children[0]?.id || ''),
+      childId: selectedChild,
       name,
       targetTokens,
       tokenSymbol,

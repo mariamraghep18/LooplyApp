@@ -31,46 +31,39 @@ export default function App() {
     setCurrentView('welcome');
   };
 
+  const selectionMap: Record<ViewState, JSX.Element> = {
+    welcome: <WelcomeScreen onNavigate={setCurrentView} />,
+    'portal-selection': <PortalSelection onNavigate={setCurrentView} />,
+    'family-selection': <FamilySelection onNavigate={setCurrentView} />,
+    'child-welcome': <ChildWelcome onNavigate={setCurrentView} />,
+    login: <Login onLogin={handleLogin} onNavigate={setCurrentView} />,
+    register: <CreateAccount onNavigate={setCurrentView} />,
+    'child-portal': <ChildPortal onLogout={handleLogout} />,
+  };
+
+  const viewMap: Record<ViewState, JSX.Element> = {
+    dashboard: <Dashboard onNavigate={setCurrentView} />,
+    plan: <Plan />,
+    'token-boards': <TokenBoards />,
+    report: <Report />,
+    'video-records': <VideoRecords />,
+    'find-my-child': <FindMyChild />,
+    'community-messages': <CommunityMessages />,
+    calendar: <Calendar />,
+    marketplace: <Marketplace />,
+    billing: <Billing />,
+    support: <Support />,
+    settings: <ParentProfile onBack={() => setCurrentView('dashboard')} />,
+  };
+
   // Render Authentication and Selection Views
   const renderSelectionAndAuth = () => {
-    switch (currentView) {
-      case 'welcome':
-        return <WelcomeScreen onNavigate={setCurrentView} />;
-      case 'portal-selection':
-        return <PortalSelection onNavigate={setCurrentView} />;
-      case 'family-selection':
-        return <FamilySelection onNavigate={setCurrentView} />;
-      case 'child-welcome':
-        return <ChildWelcome onNavigate={setCurrentView} />;
-      case 'login':
-        return <Login onLogin={handleLogin} onNavigate={setCurrentView} />;
-      case 'register':
-        return <CreateAccount onNavigate={setCurrentView} />;
-      case 'child-portal':
-        return <ChildPortal onLogout={handleLogout} />;
-      default:
-        return null; // Fallthrough to Authenticated Shell
-    }
+    return selectionMap[currentView] || null;
   };
 
   // Render Authenticated Shell & Views
   const renderView = () => {
-    switch (currentView) {
-      case 'dashboard': return <Dashboard onNavigate={setCurrentView} />;
-      case 'plan': return <Plan />;
-      case 'token-boards': return <TokenBoards />;
-      
-      case 'report': return <Report />;
-      case 'video-records': return <VideoRecords />;
-      case 'find-my-child': return <FindMyChild />;
-      case 'community-messages': return <CommunityMessages />;
-      case 'calendar': return <Calendar />;
-      case 'marketplace': return <Marketplace />;
-      case 'billing': return <Billing />;
-      case 'support': return <Support />;
-      case 'settings': return <ParentProfile onBack={() => setCurrentView('dashboard')} />;
-      default: return <Dashboard onNavigate={setCurrentView} />;
-    }
+    return viewMap[currentView] || <Dashboard onNavigate={setCurrentView} />;
   };
 
   return (

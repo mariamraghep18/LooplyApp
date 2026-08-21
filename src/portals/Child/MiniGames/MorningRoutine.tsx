@@ -50,21 +50,25 @@ export default function MorningRoutine({ onBack, onComplete }: { onBack: () => v
           {routine.map((item, idx) => {
             const isCompleted = idx < currentStep;
             const isCurrent = idx === currentStep;
-            
+            const state = isCompleted ? 'completed' : isCurrent ? 'current' : 'default';
+            const buttonClassMap = {
+              completed: 'bg-emerald-100 border-2 border-emerald-300 opacity-50',
+              current: 'bg-white border-4 border-amber-300 shadow-md hover:scale-105 active:scale-95',
+              default: 'bg-white/50 border-2 border-slate-200'
+            };
+            const textClassMap = {
+              completed: 'text-emerald-700 line-through',
+              current: 'text-amber-600',
+              default: 'text-slate-400'
+            };
             return (
               <button 
                 key={item.id}
                 onClick={() => handleStepClick(item.id)}
-                className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all ${
-                  isCompleted ? 'bg-emerald-100 border-2 border-emerald-300 opacity-50' :
-                  isCurrent ? 'bg-white border-4 border-amber-300 shadow-md hover:scale-105 active:scale-95' :
-                  'bg-white/50 border-2 border-slate-200'
-                }`}
+                className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all ${buttonClassMap[state]}`}
               >
                  <div className={`text-4xl ${isCompleted ? 'opacity-50' : ''}`}>{item.icon}</div>
-                 <div className={`text-xl font-bold ${isCompleted ? 'text-emerald-700 line-through' : isCurrent ? 'text-amber-600' : 'text-slate-400'}`}>
-                   {lang === 'en' ? item.text : item.textAr}
-                 </div>
+                 <div className={`text-xl font-bold ${textClassMap[state]}`}>{lang === 'en' ? item.text : item.textAr}</div>
                  {isCompleted && <div className="ml-auto text-emerald-500 font-bold text-2xl">✓</div>}
               </button>
             )

@@ -38,25 +38,37 @@ export default function LetterAdventure({ onBack, onComplete }: { onBack: () => 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript.toLowerCase().trim();
       const target = currentLetter.toLowerCase();
-      
-      // Simple validation for demo purposes. Speech recognition for single letters can be tricky.
-      if (transcript.startsWith(target) || transcript.includes(target) || transcript.length > 0) {
-         setFeedback('success');
-         speakVoice(lang === 'en' ? 'Great job!' : 'أحسنت!', lang);
-         confetti({ particleCount: 50, spread: 60 });
-         setTimeout(() => {
+
+      const isCorrect = transcript.startsWith(target) || transcript.includes(target) || transcript.length > 0;
+
+      const messages = {
+        success: { en: 'Great job!', ar: 'أحسنت!' },
+        error: { en: 'Try again!', ar: 'حاول مرة أخرى!' }
+      };
+
+      const feedbackType = isCorrect ? 'success' : 'error';
+      setFeedback(feedbackType);
+      speakVoice(messages[feedbackType][lang], lang);
+
+      const nextActions: Record<boolean, () => void> = {
+        true: () => setCurrentIndex(currentIndex + 1),
+        false: () => onComplete(100)
+      };
+
+      const resultActions: Record<string, () => void> = {
+        success: () => {
+          confetti({ particleCount: 50, spread: 60 });
+          setTimeout(() => {
             setFeedback('idle');
-            if (currentIndex < letters.length - 1) {
-              setCurrentIndex(currentIndex + 1);
-            } else {
-              onComplete(100);
-            }
-         }, 2000);
-      } else {
-         setFeedback('error');
-         speakVoice(lang === 'en' ? 'Try again!' : 'حاول مرة أخرى!', lang);
-         setTimeout(() => setFeedback('idle'), 2000);
-      }
+            nextActions[currentIndex < letters.length - 1]();
+          }, 2000);
+        },
+        error: () => {
+          setTimeout(() => setFeedback('idle'), 2000);
+        }
+      };
+
+      resultActions[feedbackType]();
     };
 
     recognition.start();

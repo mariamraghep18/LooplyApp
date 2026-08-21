@@ -12,6 +12,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const { children, activeChildId, setActiveChildId, goals, parentProfile, addChild } = useSharedData() as any;
   const { lang } = useLanguage();
   const activeChild = children.find((c: any) => c.id === activeChildId) || children[0];
+  
+  const messages = {
+    emptyFields: {
+      ar: "يرجى ملء جميع الحقول المطلوبة",
+      en: "Please fill all required fields"
+    },
+    determinationType: {
+      ar: 'طيف التوحد (Autism)',
+      en: 'Autism Spectrum'
+    }
+  };
+
   const [showAddChild, setShowAddChild] = useState(false);
   
   const [newChildName, setNewChildName] = useState('');
@@ -20,12 +32,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [newChildSchool, setNewChildSchool] = useState('');
   const [newChildSchoolType, setNewChildSchoolType] = useState('International');
   const [newChildPin, setNewChildPin] = useState('');
-  const [newChildDetermination, setNewChildDetermination] = useState(lang === 'ar' ? 'طيف التوحد (Autism)' : 'Autism Spectrum');
+  const [newChildDetermination, setNewChildDetermination] = useState(
+    messages.determinationType[lang] || messages.determinationType.en
+  );
 
   const handleAddChild = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newChildName || !newChildAge || !newChildGrade || !newChildSchool) {
-      alert(lang === 'ar' ? "يرجى ملء جميع الحقول المطلوبة" : "Please fill all required fields");
+      alert(messages.emptyFields[lang] || messages.emptyFields.en);
       return;
     }
     const newId = addChild({
@@ -47,7 +61,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     setNewChildSchool('');
     setNewChildSchoolType('International');
     setNewChildPin('');
-    setNewChildDetermination(lang === 'ar' ? 'طيف التوحد (Autism)' : 'Autism Spectrum');
+    setNewChildDetermination(
+      messages.determinationType[lang] || messages.determinationType.en
+    );
   };
   
   const activeGoalsCount = goals.filter((g: any) => g.childId === activeChild?.id && g.status !== 'mastered').length;

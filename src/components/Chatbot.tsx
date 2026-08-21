@@ -52,30 +52,42 @@ export function Chatbot() {
 
   const getAiResponse = (query: string): string => {
     const q = query.toLowerCase();
-    
-    if (q.includes('speech') || q.includes('language') || q.includes('كلام') || q.includes('تواصل')) {
-      return lang === 'ar'
-        ? `لتطوير مهارات الكلام لدى ${childName}:\n1. استخدم جمل قصيرة ومحددة من 2-3 كلمات.\n2. كرّر الكلمات أثناء الأنشطة اليومية مثل الإفطار واللعب.\n3. امنح الطفل 5 ثوانٍ للاستجابة قبل التكرار.`
-        : `To enhance ${childName}'s speech & language skills:\n1. Use clear 2-3 word sentences during daily routines.\n2. Repeat key action words during mealtime and play.\n3. Give ${childName} at least 5 seconds to process and respond.`;
-    }
-    
-    if (q.includes('token') || q.includes('star') || q.includes('نجم') || q.includes('تعزيز') || q.includes('مكافأ')) {
-      return lang === 'ar'
-        ? `نصائح نجاح لوحة التعزيز:\n1. حدد هدفاً واضحاً ومباشراً (مثل: ترتيب الألعاب).\n2. امنح النجمة فور وقوع السلوك الإيجابي مباشرة.\n3. اجعل المكافأة المكتسبة مرئية ومشجعة للطفل.`
-        : `Token Board success tips:\n1. Define a single, positive action target (e.g. packing up toys).\n2. Award the star immediately following the positive behavior.\n3. Keep the visual reward clear and reachable!`;
-    }
-    
-    if (q.includes('calm') || q.includes('sensory') || q.includes('هدوء') || q.includes('حسي')) {
-      return lang === 'ar'
-        ? `تقنيات الاستجابة الحسية والاسترخاء:\n1. تمارين الضغط اللطيف على الكتفين والذراعين.\n2. الاستماع لأصوات الطبيعة الهادئة في بيئة قليلة المشتتات.\n3. استخدام الألعاب الحسية ذات الملمس الناعم.`
-        : `Sensory calming techniques for ${childName}:\n1. Try gentle deep-pressure shoulder compresses.\n2. Use a low-distraction quiet corner with soft ambient sounds.\n3. Provide textured sensory toys for tactile grounding.`;
+    const responseMap = {
+      speech: {
+        en: `To enhance ${childName}'s speech & language skills:\n1. Use clear 2-3 word sentences during daily routines.\n2. Repeat key action words during mealtime and play.\n3. Give ${childName} at least 5 seconds to process and respond.`,
+        ar: `لتطوير مهارات الكلام لدى ${childName}:\n1. استخدم جمل قصيرة ومحددة من 2-3 كلمات.\n2. كرّر الكلمات أثناء الأنشطة اليومية مثل الإفطار واللعب.\n3. امنح الطفل 5 ثوانٍ للاستجابة قبل التكرار.`
+      },
+      token: {
+        en: `Token Board success tips:\n1. Define a single, positive action target (e.g. packing up toys).\n2. Award the star immediately following the positive behavior.\n3. Keep the visual reward clear and reachable!`,
+        ar: `نصائح نجاح لوحة التعزيز:\n1. حدد هدفاً واضحاً ومباشراً (مثل: ترتيب الألعاب).\n2. امنح النجمة فور وقوع السلوك الإيجابي مباشرة.\n3. اجعل المكافأة المكتسبة مرئية ومشجعة للطفل.`
+      },
+      calm: {
+        en: `Sensory calming techniques for ${childName}:\n1. Try gentle deep-pressure shoulder compresses.\n2. Use a low-distraction quiet corner with soft ambient sounds.\n3. Provide textured sensory toys for tactile grounding.`,
+        ar: `تقنيات الاستجابة الحسية والاسترخاء:\n1. تمارين الضغط اللطيف على الكتفين والذراعين.\n2. الاستماع لأصوات الطبيعة الهادئة في بيئة قليلة المشتتات.\n3. استخدام الألعاب الحسية ذات الملمس الناعم.`
+      },
+      routine: {
+        en: `For structured daily routines:\n1. Utilize a visual schedule with clear sequential pictures.\n2. Set consistent wake-up, meal, and exercise times.\n3. Offer praise after each successfully completed step.`,
+        ar: `لتنظيم الروتين الصباحي:\n1. استخدم الجداول البصرية المصورة بالترتيب.\n2. حدد أوقات ثابته للاستيقاظ والأنشطة.\n3. عزز الطفل بعد كل خطوة منجزة بنجاح.`
+      }
+    };
+
+    const patterns: { [key: string]: string[] } = {
+      speech: ['speech', 'language', 'كلام', 'تواصل'],
+      token: ['token', 'star', 'نجم', 'تعزيز', 'مكافأ'],
+      calm: ['calm', 'sensory', 'هدوء', 'حسي'],
+      routine: ['routine', 'schedule', 'روتين', 'جدول']
+    };
+
+    const category = (Object.keys(patterns) as Array<keyof typeof patterns>).find(key =>
+      patterns[key].some(keyword => q.includes(keyword))
+    );
+
+    if (category) {
+      return lang === 'ar' ? responseMap[category].ar : responseMap[category].en;
     }
 
-    if (q.includes('routine') || q.includes('schedule') || q.includes('روتين') || q.includes('جدول')) {
-      return lang === 'ar'
-        ? `لتنظيم الروتين الصباحي:\n1. استخدم الجداول البصرية المصورة بالترتيب.\n2. حدد أوقات ثابته للاستيقاظ والأنشطة.\n3. عزز الطفل بعد كل خطوة منجزة بنجاح.`
-        : `For structured daily routines:\n1. Utilize a visual schedule with clear sequential pictures.\n2. Set consistent wake-up, meal, and exercise times.\n3. Offer praise after each successfully completed step.`;
-    }
+    return '';
+  };
 
     return lang === 'ar'
       ? `شكراً لاستفسارك! أعمل باستمرار على تحليل أهداف ${childName} ومساعدة أسرتك بالأفكار والتمارين المخصصة. هل تحب استكشاف تمارين جديدة في خطة المهام اليومية؟`
@@ -174,37 +186,55 @@ export function Chatbot() {
 
           {/* Messages Container */}
           <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#FAFAFD]">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-2.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {msg.sender === 'bot' && (
-                  <div className="w-8 h-8 rounded-xl bg-[#633BE8] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
-                    🤖
+            {(() => {
+              const senderConfig = {
+                user: {
+                  justify: 'justify-end',
+                  bubble: 'bg-[#633BE8] text-white rounded-br-none',
+                  timestamp: 'text-white/70 text-right',
+                  Icon: () => (
+                    <div className="w-8 h-8 rounded-xl bg-[#9C7AF2] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
+                      👤
+                    </div>
+                  ),
+                  iconPosition: 'after',
+                },
+                bot: {
+                  justify: 'justify-start',
+                  bubble: 'bg-white text-[#2A2B47] border border-[#ECE8FD] rounded-bl-none',
+                  timestamp: 'text-[#73758C]',
+                  Icon: () => (
+                    <div className="w-8 h-8 rounded-xl bg-[#633BE8] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
+                      🤖
+                    </div>
+                  ),
+                  iconPosition: 'before',
+                },
+              };
+              return messages.map((msg) => {
+                const config = senderConfig[msg.sender];
+                const IconComponent = config.Icon;
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex gap-2.5 ${config.justify}`}
+                  >
+                    {config.iconPosition === 'before' && <IconComponent />}
+                    <div
+                      className={`max-w-[80%] p-3.5 rounded-2xl text-xs font-semibold leading-relaxed shadow-2xs ${config.bubble}`}
+                    >
+                      <p className="whitespace-pre-line">{msg.text}</p>
+                      <span
+                        className={`block text-[9px] mt-1.5 ${config.timestamp}`}
+                      >
+                        {msg.timestamp}
+                      </span>
+                    </div>
+                    {config.iconPosition === 'after' && <IconComponent />}
                   </div>
-                )}
-
-                <div
-                  className={`max-w-[80%] p-3.5 rounded-2xl text-xs font-semibold leading-relaxed shadow-2xs ${
-                    msg.sender === 'user'
-                      ? 'bg-[#633BE8] text-white rounded-br-none'
-                      : 'bg-white text-[#2A2B47] border border-[#ECE8FD] rounded-bl-none'
-                  }`}
-                >
-                  <p className="whitespace-pre-line">{msg.text}</p>
-                  <span className={`block text-[9px] mt-1.5 ${msg.sender === 'user' ? 'text-white/70 text-right' : 'text-[#73758C]'}`}>
-                    {msg.timestamp}
-                  </span>
-                </div>
-
-                {msg.sender === 'user' && (
-                  <div className="w-8 h-8 rounded-xl bg-[#9C7AF2] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
-                    👤
-                  </div>
-                )}
-              </div>
-            ))}
+                );
+              });
+            })()}
 
             {isTyping && (
               <div className="flex gap-2.5 items-center">

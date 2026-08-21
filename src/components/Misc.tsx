@@ -31,23 +31,28 @@ export function Calendar() {
   };
 
   const handleOpenModal = (event?: any) => {
-    if (event) {
-      setEditingEventId(event.id);
-      setEventDate(event.date);
-      setEventEndDate(event.endDate || event.date);
-      setEventTime(event.time);
-      setEventTitle(event.title);
-      setEventContent(event.content);
-      setSpecialistName(event.specialistName || '');
-    } else {
-      setEditingEventId(null);
-      setEventDate(selectedDate || new Date().toISOString().split('T')[0]);
-      setEventEndDate(selectedDate || new Date().toISOString().split('T')[0]);
-      setEventTime('10:00');
-      setEventTitle('');
-      setEventContent('');
-      setSpecialistName('');
-    }
+    const defaultDateStr = new Date().toISOString().split('T')[0];
+    const baseDate = selectedDate || defaultDateStr;
+    const config = event
+      ? [
+          [setEditingEventId, event.id],
+          [setEventDate, event.date],
+          [setEventEndDate, event.endDate || event.date],
+          [setEventTime, event.time],
+          [setEventTitle, event.title],
+          [setEventContent, event.content],
+          [setSpecialistName, event.specialistName || ''],
+        ]
+      : [
+          [setEditingEventId, null],
+          [setEventDate, baseDate],
+          [setEventEndDate, baseDate],
+          [setEventTime, '10:00'],
+          [setEventTitle, ''],
+          [setEventContent, ''],
+          [setSpecialistName, ''],
+        ];
+    config.forEach(([setter, value]) => setter(value));
     setShowEventModal(true);
   };
 

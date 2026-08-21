@@ -286,45 +286,34 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
   };
 
   const handleDocumentAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      Array.from(files).forEach((file: File) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            setFormData(prev => ({
-              ...prev,
-              childAttachments: [
-                ...prev.childAttachments,
-                {
-                  name: file.name,
-                  url: event.target!.result as string,
-                  type: file.type || 'document',
-                  size: `${(file.size / 1024).toFixed(1)} KB`
-                }
-              ]
-            }));
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.email !== formData.confirmEmail) {
-      alert(lang === 'ar' ? "البريد الإلكتروني وتأكيد البريد غير متطابقين" : "Email addresses do not match");
-      return;
+    const validations = [
+      {
+        condition: formData.email !== formData.confirmEmail,
+        message: lang === 'ar'
+          ? "البريد الإلكتروني وتأكيد البريد غير متطابقين"
+          : "Email addresses do not match"
+      },
+      {
+        condition: formData.password !== formData.confirmPassword,
+        message: lang === 'ar'
+          ? "كلمة المرور غير متطابقة"
+          : "Passwords do not match"
+      }
+    ];
+    for (const { condition, message } of validations) {
+      if (condition) {
+        alert(message);
+        return;
+      }
     }
-    if (formData.password !== formData.confirmPassword) {
-      alert(lang === 'ar' ? "كلمة المرور غير متطابقة" : "Passwords do not match");
-      return;
-    }
-    
-    const finalDetermination = formData.determinationType === 'Other' || formData.determinationType === 'أخرى'
-      ? (formData.customDetermination || 'Custom Special Need') 
-      : formData.determinationType;
+
+    const determinationMap: Record<string, string> = {
+      Other: formData.customDetermination || 'Custom Special Need',
+      'أخرى': formData.customDetermination || 'Custom Special Need'
+    };
+    const finalDetermination = determinationMap[formData.determinationType] || formData.determinationType;
 
     setParentProfile({
       id: Math.random().toString(36).substr(2, 9),
@@ -337,6 +326,8 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
       idCardPhoto: formData.idCardPhoto,
       determinationType: finalDetermination,
       childAttachments: formData.childAttachments,
+    });
+  };
     });
     
     onNavigate('login');

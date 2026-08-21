@@ -14,7 +14,7 @@ export function Report() {
   return (
     <div className="space-y-10 animate-fade-in pb-10 font-sans" style={{ backgroundColor: '#FAFAFD' }}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#ECE8FD] pb-4">
-        <h2 className="text-2xl font-black text-[#2A2B47]">
+        <h2 className="text-2xl font-black text-[#2A2B47']">
           {lang === 'ar' ? 'التقارير والتحليلات الشاملة' : 'Comprehensive Reports'}
         </h2>
         

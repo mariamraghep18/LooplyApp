@@ -176,20 +176,24 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     if (isRecording) {
       interval = setInterval(() => {
         setRecordingTime(prev => {
-          if (prev <= 0) {
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-              mediaRecorderRef.current.stop();
-              setIsRecording(false);
-            }
-            if (!isSessionEnded) {
-               setIsSessionEnded(true);
-               setPlayingGame(null);
-               setCurrentView('dashboard');
-               alert(lang === 'en' ? "Time's up for today! Your session is locked." : "انتهى وقت اليوم! تم قفل الجلسة.");
-            }
-            return 0;
-          }
-          return prev - 1;
+          const actions = {
+            expired: (prevTime) => {
+              if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+                mediaRecorderRef.current.stop();
+                setIsRecording(false);
+              }
+              if (!isSessionEnded) {
+                setIsSessionEnded(true);
+                setPlayingGame(null);
+                setCurrentView('dashboard');
+                alert(lang === 'en' ? "Time's up for today! Your session is locked." : "انتهى وقت اليوم! تم قفل الجلسة.");
+              }
+              return 0;
+            },
+            active: (prevTime) => prevTime - 1
+          };
+          const status = prev <= 0 ? 'expired' : 'active';
+          return actions[status](prev);
         });
       }, 1000);
     }
@@ -198,31 +202,6 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const t = {
-    welcome: lang === 'en' ? 'Welcome back' : 'مرحباً بعودتك',
-    ready: lang === 'en' ? 'Ready for today\'s adventure?' : 'مستعد لمغامرة اليوم؟',
-    missions: lang === 'en' ? 'Today\'s Missions' : 'مهام اليوم',
-    progress: lang === 'en' ? 'Today\'s Progress' : 'تقدم اليوم',
-    streak: lang === 'en' ? 'Day Streak' : 'أيام متتالية',
-    keepGoing: lang === 'en' ? 'Keep going!' : 'استمر يا بطل!',
-    xp: lang === 'en' ? 'XP' : 'نقاط',
-    level: lang === 'en' ? 'Level' : 'مستوى',
-    play: lang === 'en' ? 'PLAY' : 'العب',
-    completed: lang === 'en' ? 'Completed' : 'مكتمل',
-    dashboard: lang === 'en' ? 'Home' : 'الرئيسية',
-    games: lang === 'en' ? 'Games' : 'الألعاب',
-    goals: lang === 'en' ? 'My Goals' : 'أهدافي',
-    calendar: lang === 'en' ? 'Calendar' : 'التقويم',
-    achievements: lang === 'en' ? 'Achievements' : 'إنجازاتي',
-    rewards: lang === 'en' ? 'Rewards' : 'المكافآت',
-    messages: lang === 'en' ? 'Messages' : 'الرسائل',
-    logout: lang === 'en' ? 'Logout' : 'تسجيل الخروج',
-  };
-
   const renderGames = () => {
     if (playingGame) {
       const handleGameComplete = () => {
@@ -239,16 +218,17 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
       
       const handleBack = () => setPlayingGame(null);
 
-      switch (playingGame.id) {
-        case 'game7':
-          return <HandWashingGame onBack={handleBack} onComplete={handleGameComplete} />;
-        case 'game8':
-          return <MorningRoutine onBack={handleBack} onComplete={handleGameComplete} />;
-        case 'game1':
-          return <MemoryMatch onBack={handleBack} onComplete={handleGameComplete} />;
-        case 'game2':
-          return <LetterAdventure onBack={handleBack} onComplete={handleGameComplete} />;
-        case 'game3':
+      const gameComponents = {
+        game7: HandWashingGame,
+        game8: MorningRoutine,
+        game1: MemoryMatch,
+        game2: LetterAdventure
+      };
+
+      const SelectedGame = gameComponents[playingGame.id];
+      return SelectedGame ? <SelectedGame onBack={handleBack} onComplete={handleGameComplete} /> : null;
+    }
+  };
           return <ColorMatch onBack={handleBack} onComplete={handleGameComplete} />;
         case 'game4':
           return <EmotionMirror onBack={handleBack} onComplete={handleGameComplete} />;
@@ -418,7 +398,8 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
                       {task.completed && <Check className="w-4 h-4 text-[#2A2B47]" />}
                     </div>
                     <div>
-                      <h4 className={`font-black text-sm ${task.completed ? 'line-through text-[#73758C]' : 'text-[#2A2B47]'}`}>
+                      <h4 className={`font-black text-sm ${task.completed ? 'line-through text-[#73758C]' : 'text-[#2A2B47]'}`}
+                      >
                         {task.icon} {lang === 'ar' ? task.titleAr : task.title}
                       </h4>
                       <div className="flex items-center gap-2 mt-0.5 text-[11px] font-semibold text-[#73758C]">
@@ -563,19 +544,25 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
       { id: 5, title: 'Hand Washing Routine', titleAr: 'روتين غسيل اليدين', status: 'Completed', statusAr: 'مكتملة', date: 'August 09, 2026', time: '08:45 AM', reward: 15, icon: '🧼' },
     ];
 
+    const texts = {
+      headerLabel: { ar: 'سجل المهام المنجزة', en: 'Achieved History' },
+      achievedTasksTitle: { ar: 'المهام المنجزة بنجاح (Achieved)', en: 'Achieved Tasks' },
+      achievedCount: { ar: '5 / 10 مهام تم إنجازها بنجاح', en: '5 / 10 Tasks Achieved' },
+    };
+
     return (
       <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
         {/* Header */}
         <div className="flex justify-between items-center bg-gradient-to-r from-[#70E4BE] to-[#633BE8] p-6 rounded-3xl text-white shadow-md">
           <div>
             <span className="text-[10px] font-black uppercase bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full text-white inline-block mb-1">
-              🏆 {lang === 'ar' ? 'سجل المهام المنجزة' : 'Achieved History'}
+              🏆 {texts.headerLabel[lang]}
             </span>
             <h2 className="text-2xl font-black">
-              {lang === 'ar' ? 'المهام المنجزة بنجاح (Achieved)' : 'Achieved Tasks'}
+              {texts.achievedTasksTitle[lang]}
             </h2>
             <p className="text-xs font-semibold text-white/90 mt-1">
-              {lang === 'ar' ? '5 / 10 مهام تم إنجازها بنجاح' : '5 / 10 Tasks Achieved'}
+              {texts.achievedCount[lang]}
             </p>
           </div>
           <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-3xl shadow-xs">
@@ -815,47 +802,58 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
           </div>
 
           <div className="space-y-3">
-            {activeEvents.map((ev) => (
-              <div key={ev.id} className="p-4 rounded-2xl border border-[#ECE8FD] bg-[#FAFAFD] hover:border-[#633BE8] transition-all space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-white border border-[#ECE8FD] flex items-center justify-center text-xl shadow-xs">
-                      {ev.icon}
+            {activeEvents.map((ev) => {
+              const suffix = lang === 'ar' ? 'Ar' : '';
+              const title = ev[`title${suffix}`];
+              const type = ev[`type${suffix}`];
+              const notes = ev[`notes${suffix}`];
+              const labels = {
+                ar: { doctor: 'الطبيب:', location: 'المكان:' },
+                en: { doctor: 'Doctor:', location: 'Location:' },
+              }[lang];
+
+              return (
+                <div key={ev.id} className="p-4 rounded-2xl border border-[#ECE8FD] bg-[#FAFAFD] hover:border-[#633BE8] transition-all space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-white border border-[#ECE8FD] flex items-center justify-center text-xl shadow-xs">
+                        {ev.icon}
+                      </div>
+                      <div>
+                        <h4 className="font-black text-[#2A2B47] text-sm">
+                          {title}
+                        </h4>
+                        <span className="text-[10px] font-bold text-[#633BE8] bg-[#ECE8FD] px-2 py-0.5 rounded-full">
+                          {type}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-black text-[#2A2B47] text-sm">
-                        {lang === 'ar' ? ev.titleAr : ev.title}
-                      </h4>
-                      <span className="text-[10px] font-bold text-[#633BE8] bg-[#ECE8FD] px-2 py-0.5 rounded-full">
-                        {lang === 'ar' ? ev.typeAr : ev.type}
-                      </span>
-                    </div>
+                    <span className="text-xs font-black text-[#92400E] bg-[#FFF7ED] px-3 py-1 rounded-xl border border-[#FDE68A]">
+                      ⏰ {ev.time}
+                    </span>
                   </div>
-                  <span className="text-xs font-black text-[#92400E] bg-[#FFF7ED] px-3 py-1 rounded-xl border border-[#FDE68A]">
-                    ⏰ {ev.time}
-                  </span>
-                </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#73758C] pt-1">
-                  {ev.doctor && (
-                    <span className="flex items-center gap-1 text-[#2A2B47] font-bold">
-                      👨‍⚕️ {lang === 'ar' ? 'الطبيب:' : 'Doctor:'} {ev.doctor}
-                    </span>
-                  )}
-                  {ev.location && (
-                    <span className="flex items-center gap-1">
-                      📍 {lang === 'ar' ? 'المكان:' : 'Location:'} {ev.location}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#73758C] pt-1">
+                    {ev.doctor && (
+                      <span className="flex items-center gap-1 text-[#2A2B47] font-bold">
+                        👨‍⚕️ {labels.doctor} {ev.doctor}
+                      </span>
+                    )}
+                    {ev.location && (
+                      <span className="flex items-center gap-1">
+                        📍 {labels.location} {ev.location}
+                      </span>
+                    )}
+                  </div>
+
+                  {(ev.notes || ev.notesAr) && (
+                    <p className="text-[11px] text-[#73758C] font-medium bg-white p-2.5 rounded-xl border border-[#ECE8FD]">
+                      💡 {notes}
+                    </p>
                   )}
                 </div>
-
-                {(ev.notes || ev.notesAr) && (
-                  <p className="text-[11px] text-[#73758C] font-medium bg-white p-2.5 rounded-xl border border-[#ECE8FD]">
-                    💡 {lang === 'ar' ? ev.notesAr : ev.notes}
-                  </p>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -925,21 +923,46 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
       }));
     };
 
+    const textMap = {
+      title: {
+        en: 'My Token Boards',
+        ar: 'لوحة التعزيز (Token Board)'
+      },
+      desc: {
+        en: 'Click on slots to add tokens from your daily achievements and unlock rewards!',
+        ar: 'اضغط على النجوم لإضافة الرموز التعبيرية وإكمال لوحة المكافآت!'
+      },
+      badge: {
+        en: 'Interactive Board',
+        ar: 'لوحة النجوم التفاعلية'
+      },
+      achievement: {
+        en: 'Token Achievement',
+        ar: 'لوحة تجميع النجوم'
+      },
+      moreToGo: {
+        en: 'more to go!',
+        ar: 'متبقية لإكمال اللوحة!'
+      },
+      reward: {
+        en: (board: any) => `Earn ${board.targetTokens} ${board.tokenSymbol} to unlock: ${board.rewardText}`,
+        ar: (board: any) => `اجمع ${board.targetTokens} ${board.tokenSymbol} للحصول على: ${board.rewardText}`
+      }
+    };
+
     return (
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-extrabold text-slate-800 flex items-center gap-2">
-              🌟 {lang === 'en' ? 'My Token Boards' : 'لوحة التعزيز (Token Board)'}
+              🌟 {textMap.title[lang]}
             </h2>
             <p className="text-slate-500 font-medium text-sm mt-1">
-              {lang === 'en' 
-                ? 'Click on slots to add tokens from your daily achievements and unlock rewards!' 
-                : 'اضغط على النجوم لإضافة الرموز التعبيرية وإكمال لوحة المكافآت!'}
+              {textMap.desc[lang]}
             </p>
           </div>
           <div className="bg-amber-100 text-amber-800 px-5 py-2.5 rounded-full font-bold flex items-center gap-2 text-base shadow-sm shrink-0">
-            ⭐ {lang === 'en' ? 'Interactive Board' : 'لوحة النجوم التفاعلية'}
+            ⭐ {textMap.badge[lang]}
           </div>
         </div>
 
@@ -953,13 +976,11 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
                 <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center justify-between">
                   <div className="flex-1 text-center md:text-left">
                     <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-3 py-1 rounded-full text-xs font-extrabold mb-2">
-                      🌟 {lang === 'ar' ? 'لوحة تجميع النجوم' : 'Token Achievement'}
+                      🌟 {textMap.achievement[lang]}
                     </div>
                     <h3 className="text-2xl font-extrabold text-slate-800 mb-2">{board.name}</h3>
                     <p className="text-slate-600 font-medium text-sm sm:text-base mb-4">
-                      {lang === 'en' 
-                        ? `Earn ${board.targetTokens} ${board.tokenSymbol} to unlock: ${board.rewardText}` 
-                        : `اجمع ${board.targetTokens} ${board.tokenSymbol} للحصول على: ${board.rewardText}`}
+                      {textMap.reward[lang](board)}
                     </p>
                     
                     <div className="flex items-center gap-4 mb-2 justify-center md:justify-start">
@@ -968,8 +989,16 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
                       </div>
                       {!isCompleted ? (
                         <div className="bg-amber-100 text-amber-800 px-4 py-2 rounded-xl font-extrabold text-sm">
-                          {board.targetTokens - board.currentTokens} {lang === 'en' ? 'more to go!' : 'متبقية لإكمال اللوحة!'}
+                          {board.targetTokens - board.currentTokens} {textMap.moreToGo[lang]}
                         </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
                       ) : (
                         <div className="bg-emerald-500 text-white px-5 py-2 rounded-xl font-extrabold text-sm shadow-md animate-bounce">
                           🎉 {lang === 'en' ? 'Board Complete! Reward Unlocked!' : 'تم إكمال اللوحة واقتناء المكافأة! 🎉'}
@@ -1068,6 +1097,13 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
 
         {/* Rewards Items Grid (17 items) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          const rarityClassMap: Record<string, string> = {
+            legendary: 'bg-gradient-to-br from-[#FFD066]/30 to-[#FFA660]/40',
+            epic: 'bg-gradient-to-br from-[#9C7AF2]/20 to-[#FF6086]/30',
+            rare: 'bg-gradient-to-br from-[#70E4BE]/20 to-[#633BE8]/20',
+            default: 'bg-[#FAFAFD]',
+          };
+
           {filteredRewards.length > 0 ? filteredRewards.map((reward: any) => (
             <div 
               key={reward.id} 
@@ -1075,7 +1111,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
               className="bg-white rounded-3xl p-4 text-center border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#633BE8] hover:scale-105 transition-all flex flex-col justify-between group"
             >
               <div>
-                <div className={`w-full h-24 rounded-2xl flex items-center justify-center text-5xl mb-3 border border-[#ECE8FD] group-hover:scale-105 transition-transform ${reward.rarity === 'legendary' ? 'bg-gradient-to-br from-[#FFD066]/30 to-[#FFA660]/40' : reward.rarity === 'epic' ? 'bg-gradient-to-br from-[#9C7AF2]/20 to-[#FF6086]/30' : reward.rarity === 'rare' ? 'bg-gradient-to-br from-[#70E4BE]/20 to-[#633BE8]/20' : 'bg-[#FAFAFD]'}`}>
+                <div className={`w-full h-24 rounded-2xl flex items-center justify-center text-5xl mb-3 border border-[#ECE8FD] group-hover:scale-105 transition-transform ${rarityClassMap[reward.rarity] || rarityClassMap.default}`}>  
                   {reward.icon}
                 </div>
                 <h3 className="font-black text-[#2A2B47] text-sm mb-2 truncate">
@@ -1208,24 +1244,35 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
           
           <div className="p-4 bg-slate-50 border-t border-slate-100 flex-shrink-0">
             <div className="flex gap-2 overflow-x-auto pb-3 mb-3 border-b border-slate-200">
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">❤️ Thank you</button>
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">👍 Okay!</button>
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">😊 I'm happy!</button>
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">🎉 I did it!</button>
-              <button className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all">❓ I need help</button>
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="p-3 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
-                📷
-              </button>
-              <input 
-                type="text" 
-                placeholder="Type a message..." 
-                className="flex-1 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <button className="p-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
-                <Play className="w-5 h-5 fill-current" />
-              </button>
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+                {[
+                  { emoji: '❤️', label: 'Thank you' },
+                  { emoji: '👍', label: 'Okay!' },
+                  { emoji: '😊', label: "I'm happy!" },
+                  { emoji: '🎉', label: 'I did it!' },
+                  { emoji: '❓', label: 'I need help' },
+                ].map(({ emoji, label }) => (
+                  <button
+                    key={label}
+                    className="flex-shrink-0 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-700 hover:bg-slate-100 hover:scale-105 transition-all"
+                  >
+                    {emoji} {label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-3">
+                <button className="p-3 bg-white border border-slate-200 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
+                  📷
+                </button>
+                <input 
+                  type="text" 
+                  placeholder="Type a message..." 
+                  className="flex-1 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <button className="p-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
+                  <Play className="w-5 h-5 fill-current" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1233,32 +1280,41 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     </div>
   );
 
-  const renderDashboard = () => (
-    <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans">
-      {/* 1. Top Greeting & Settings Header */}
-      <div className="flex justify-between items-center bg-white p-5 rounded-3xl border border-[#ECE8FD] shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#ECE8FD] border border-[#633BE8]/20 flex items-center justify-center text-2xl overflow-hidden shadow-xs">
-            {childAvatar?.startsWith('data:') ? <img src={childAvatar} className="w-full h-full object-cover"/> : childAvatar || '👦'}
-          </div>
-          <div>
-            <h1 className="text-lg font-black text-[#2A2B47]">
-              {lang === 'ar' ? `أهلاً بعودتك، ${childName}! 👋` : `Welcome back, ${childName}! 👋`}
-            </h1>
-            <p className="text-xs font-semibold text-[#73758C]">
-              {lang === 'ar' ? 'جاهز لمغامرة اليوم؟' : 'Ready for today\'s adventure?'}
-            </p>
-          </div>
-        </div>
+  const renderDashboard = () => {
+    const feedbackOptions = [
+      { emoji: '❤️', label: 'Thank you' },
+      { emoji: '👍', label: 'Okay!' },
+      { emoji: '😊', label: "I'm happy!" },
+      { emoji: '🎉', label: 'I did it!' },
+      { emoji: '❓', label: 'I need help' },
+    ];
 
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={() => { setLang(lang === 'en' ? 'ar' : 'en'); playAudioFeedback('click'); }}
-            className="p-2.5 bg-[#FAFAFD] text-[#633BE8] rounded-2xl border border-[#ECE8FD] hover:bg-[#ECE8FD] transition-colors"
-            title="Switch Language"
-          >
-            <Globe className="w-4 h-4" />
-          </button>
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans">
+        {/* 1. Top Greeting & Settings Header */}
+        <div className="flex justify-between items-center bg-white p-5 rounded-3xl border border-[#ECE8FD] shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#ECE8FD] border border-[#633BE8]/20 flex items-center justify-center text-2xl overflow-hidden shadow-xs">
+              {childAvatar?.startsWith('data:') ? <img src={childAvatar} className="w-full h-full object-cover"/> : childAvatar || '👦'}
+            </div>
+            <div>
+              <h1 className="text-lg font-black text-[#2A2B47]">
+                {lang === 'ar' ? `أهلاً بعودتك، ${childName}! 👋` : `Welcome back, ${childName}! 👋`}
+              </h1>
+              <p className="text-xs font-semibold text-[#73758C]">
+                {lang === 'ar' ? 'جاهز لمغامرة اليوم؟' : 'Ready for today\'s adventure?'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => { setLang(lang === 'en' ? 'ar' : 'en'); playAudioFeedback('click'); }}
+              className="p-2.5 bg-[#FAFAFD] text-[#633BE8] rounded-2xl border border-[#ECE8FD] hover:bg-[#ECE8FD] transition-colors"
+              title="Switch Language"
+            >
+              <Globe className="w-4 h-4" />
+            </button>
           <button 
             onClick={() => { const m = toggleAudioMute(); setIsMuted(m); }}
             className="p-2.5 bg-[#FAFAFD] text-[#633BE8] rounded-2xl border border-[#ECE8FD] hover:bg-[#ECE8FD] transition-colors"
@@ -1596,6 +1652,11 @@ const renderProgress = () => (
     }
   };
 
+  const profileTexts = {
+    upload: { en: 'Upload', ar: 'رفع صورة' },
+    level: { en: (lvl: number) => `Level ${lvl}`, ar: (lvl: number) => `المستوى ${lvl}` },
+  };
+
   const renderProfile = () => (
     <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
       {/* Top Header Card */}
@@ -1609,7 +1670,7 @@ const renderProgress = () => (
             )}
             
             <label className="absolute inset-0 bg-[#633BE8]/80 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-              <span className="text-white text-xs font-black">{lang === 'en' ? 'Upload' : 'رفع صورة'}</span>
+              <span className="text-white text-xs font-black">{profileTexts.upload[lang]}</span>
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
           </div>
@@ -1617,8 +1678,9 @@ const renderProgress = () => (
           <h3 className="text-2xl font-black text-[#2A2B47] mb-1">{childName}</h3>
           
           <div className="flex items-center gap-2 mb-4">
-            <span className={`${currentTheme.class} text-white px-3.5 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-xs`}>
-              ⚡ {lang === 'en' ? `Level ${childLevel}` : `المستوى ${childLevel}`}
+            <span className={`${currentTheme.class} text-white px-3.5 py-1 rounded-full text-xs font-black flex items-center gap-1 shadow-xs`}
+            >
+              ⚡ {profileTexts.level[lang](childLevel)}
             </span>
             <span className="bg-[#FFF7ED] text-[#FFA660] border border-[#FFA660]/30 px-3.5 py-1 rounded-full text-xs font-black">
               🪙 {childCoins} Coins
@@ -1711,15 +1773,22 @@ const renderProgress = () => (
               </h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {d.achievements.map((ach) => (
-                <div key={ach.id} className={`bg-white p-3 rounded-xl border flex items-center gap-3 ${ach.locked ? 'opacity-60 border-[#ECE8FD]' : 'border-[#FFA660]/30 shadow-xs'}`}>
-                  <span className="text-2xl">{ach.icon}</span>
-                  <div>
-                    <p className="font-black text-xs text-[#2A2B47]">{lang === 'ar' ? ach.titleAr : ach.title}</p>
-                    <p className="text-[10px] text-[#73758C] font-semibold">{ach.locked ? (lang === 'ar' ? '🔒 غير مكتمل' : '🔒 Locked') : (lang === 'ar' ? '🏆 مكتمل' : '🏆 Unlocked')}</p>
+              {d.achievements.map((ach) => {
+                const statusMessages = {
+                  locked: { en: '🔒 Locked', ar: '🔒 غير مكتمل' },
+                  unlocked: { en: '🏆 Unlocked', ar: '🏆 مكتمل' },
+                };
+                const statusKey = ach.locked ? 'locked' : 'unlocked';
+                return (
+                  <div key={ach.id} className={`bg-white p-3 rounded-xl border flex items-center gap-3 ${ach.locked ? 'opacity-60 border-[#ECE8FD]' : 'border-[#FFA660]/30 shadow-xs'}`}>
+                    <span className="text-2xl">{ach.icon}</span>
+                    <div>
+                      <p className="font-black text-xs text-[#2A2B47]">{lang === 'ar' ? ach.titleAr : ach.title}</p>
+                      <p className="text-[10px] text-[#73758C] font-semibold">{statusMessages[statusKey][lang]}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -1746,40 +1815,52 @@ const renderProgress = () => (
           { title: 'Super Speaker', titleAr: 'المتحدث الخارق', desc: 'Complete 5 speech games', progress: 3, total: 5, reward: 100, icon: '🗣️', color: 'text-blue-500' },
           { title: 'Morning Hero', titleAr: 'بطل الصباح', desc: 'Finish morning routine 3 days in a row', progress: 1, total: 3, reward: 50, icon: '☀️', color: 'text-amber-500' },
           { title: 'Focus Master', titleAr: 'سيد التركيز', desc: 'Play matching games for 20 minutes', progress: 15, total: 20, reward: 75, icon: '🧠', color: 'text-purple-500' }
-        ].map((challenge, i) => (
-          <div key={i} className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-100 flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-sm ${challenge.progress === challenge.total ? 'bg-green-100' : 'bg-slate-100'}`}>
-                {challenge.icon}
+        ].map((challenge, i) => {
+          const isCompleted = challenge.progress === challenge.total;
+          const title = { en: challenge.title, ar: challenge.titleAr }[lang];
+          const statusKey = challenge.progress < challenge.total ? 'inProgress' : 'completed';
+          const buttonConfig = {
+            inProgress: {
+              onClick: () => { setCurrentView('games'); },
+              className: "w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors",
+              text: { en: 'Go to Games', ar: 'اذهب للألعاب' }
+            },
+            completed: {
+              onClick: undefined,
+              className: "w-full py-3 bg-green-100 text-green-700 font-bold rounded-xl cursor-default",
+              text: { en: 'Completed!', ar: 'مكتمل!' }
+            }
+          };
+          const { onClick, className, text } = buttonConfig[statusKey];
+          return (
+            <div key={i} className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-100 flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-sm ${isCompleted ? 'bg-green-100' : 'bg-slate-100'}`}>
+                  {challenge.icon}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-slate-800 text-lg">{title}</h3>
+                  <p className="text-sm text-slate-500">{challenge.desc}</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-slate-800 text-lg">{lang === 'en' ? challenge.title : challenge.titleAr}</h3>
-                <p className="text-sm text-slate-500">{challenge.desc}</p>
+              <div>
+                <div className="flex justify-between text-sm font-bold text-slate-600 mb-1">
+                  <span>{challenge.progress} / {challenge.total}</span>
+                  <span className="text-amber-500">⭐ +{challenge.reward} XP</span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                  <div className="bg-purple-500 h-full rounded-full transition-all" style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}></div>
+                </div>
               </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-bold text-slate-600 mb-1">
-                <span>{challenge.progress} / {challenge.total}</span>
-                <span className="text-amber-500">⭐ +{challenge.reward} XP</span>
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                <div className="bg-purple-500 h-full rounded-full transition-all" style={{ width: `${(challenge.progress / challenge.total) * 100}%` }}></div>
-              </div>
-            </div>
-            {challenge.progress < challenge.total ? (
-              <button 
-                onClick={() => { setCurrentView('games');  }}
-                className="w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+              <button
+                onClick={onClick}
+                className={className}
               >
-                {lang === 'en' ? 'Go to Games' : 'اذهب للألعاب'}
+                {text[lang]}
               </button>
-            ) : (
-              <button className="w-full py-3 bg-green-100 text-green-700 font-bold rounded-xl cursor-default">
-                {lang === 'en' ? 'Completed!' : 'مكتمل!'}
-              </button>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -1789,20 +1870,25 @@ const renderProgress = () => (
     const progressPercent = Math.round((completedCount / dailyTasksList.length) * 100);
 
     const toggleTask = (id: number) => {
-      setDailyTasksList(prev => prev.map(t => {
-        if (t.id === id) {
-          const nextVal = !t.completed;
-          if (nextVal) {
-            playAudioFeedback('success');
-            setShowToast(true);
-            setTimeout(() => setShowToast(false), 3000);
-            if (activeChildId) {
-              updateChild(activeChildId, { xp: childXp + t.reward, coins: childCoins + 10 });
-            }
+      const actionMap: Record<string, (task: typeof dailyTasksList[0]) => void> = {
+        true: (task) => {
+          playAudioFeedback('success');
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+          if (activeChildId) {
+            updateChild(activeChildId, { xp: childXp + task.reward, coins: childCoins + 10 });
           }
-          return { ...t, completed: nextVal };
+        },
+        false: () => {}
+      };
+
+      setDailyTasksList(prev => prev.map(t => {
+        if (t.id !== id) {
+          return t;
         }
-        return t;
+        const nextVal = !t.completed;
+        actionMap[String(nextVal)](t);
+        return { ...t, completed: nextVal };
       }));
     };
 

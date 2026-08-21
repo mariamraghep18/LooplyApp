@@ -28,18 +28,37 @@ export function Layout({ currentView, onNavigate, onLogout, children }: LayoutPr
   const { parentProfile } = useSharedData() as any;
   const { lang, setLang } = useLanguage();
 
-  const tabs = [
-    { view: 'dashboard', label: lang === 'ar' ? 'الرئيسية' : 'Dashboard', icon: LayoutDashboard },
-    { view: 'token-boards', label: lang === 'ar' ? 'لوحة التعزيز' : 'Token Board', icon: Star },
-    { view: 'settings', label: lang === 'ar' ? 'الملف الشخصي' : 'Profile', icon: User },
-    { view: 'plan', label: lang === 'ar' ? 'المهام' : 'Tasks', icon: Target },
-    { view: 'calendar', label: lang === 'ar' ? 'التقويم' : 'Calendar', icon: CalendarIcon },
-    { view: 'report', label: lang === 'ar' ? 'التقارير' : 'Report', icon: PieChart },
-    { view: 'find-my-child', label: lang === 'ar' ? 'تتبع الطفل' : 'Find My Child', icon: MapPin },
-    { view: 'community-messages', label: lang === 'ar' ? 'المجتمع' : 'Community', icon: MessageCircle },
-    { view: 'marketplace', label: lang === 'ar' ? 'المتجر' : 'Marketplace', icon: ShoppingBag },
-    { view: 'billing', label: lang === 'ar' ? 'الفواتير والمدفوعات' : 'Billing & Payments', icon: CreditCard },
+  const tabViews = [
+    { view: 'dashboard', icon: LayoutDashboard },
+    { view: 'token-boards', icon: Star },
+    { view: 'settings', icon: User },
+    { view: 'plan', icon: Target },
+    { view: 'calendar', icon: CalendarIcon },
+    { view: 'report', icon: PieChart },
+    { view: 'find-my-child', icon: MapPin },
+    { view: 'community-messages', icon: MessageCircle },
+    { view: 'marketplace', icon: ShoppingBag },
+    { view: 'billing', icon: CreditCard },
   ];
+
+  const labels: Record<ViewState, { en: string; ar: string }> = {
+    dashboard: { en: 'Dashboard', ar: 'الرئيسية' },
+    'token-boards': { en: 'Token Board', ar: 'لوحة التعزيز' },
+    settings: { en: 'Profile', ar: 'الملف الشخصي' },
+    plan: { en: 'Tasks', ar: 'المهام' },
+    calendar: { en: 'Calendar', ar: 'التقويم' },
+    report: { en: 'Report', ar: 'التقارير' },
+    'find-my-child': { en: 'Find My Child', ar: 'تتبع الطفل' },
+    'community-messages': { en: 'Community', ar: 'المجتمع' },
+    marketplace: { en: 'Marketplace', ar: 'المتجر' },
+    billing: { en: 'Billing & Payments', ar: 'الفواتير والمدفوعات' },
+  };
+
+  const tabs = tabViews.map(({ view, icon }) => ({
+    view,
+    label: labels[view][lang],
+    icon,
+  }));
 
   return (
     <div className="min-h-screen bg-[#FAFAFD] font-sans flex flex-col text-[#2A2B47]">
@@ -48,7 +67,7 @@ export function Layout({ currentView, onNavigate, onLogout, children }: LayoutPr
         <div 
           onClick={() => onNavigate('settings')}
           className="flex items-center gap-3 cursor-pointer group"
-          title={lang === 'ar' ? 'عرض الملف الشخصي' : 'View Profile'}
+          title={labels['settings'][lang]}
         >
           <div className="w-11 h-11 bg-[#ECE8FD] group-hover:bg-[#633BE8] group-hover:text-white rounded-2xl flex items-center justify-center text-[#633BE8] border border-[#633BE8]/20 shadow-xs transition-all">
              <span className="font-extrabold text-2xl tracking-tight">L</span>

@@ -17,9 +17,15 @@ export default function ChildWelcome({ onNavigate }: { onNavigate: (view: string
   useEffect(() => {
     if (pin.length === 4) {
       // Find matching child or accept demo PIN 1234
-      const matchedChild = children.find(c => c.pin === pin);
-      if (matchedChild || pin === '1234' || children.length > 0) {
-        const activeChild = matchedChild || children[0] || { id: 'child-1', name: 'Buddy', nickname: 'Buddy' };
+      const pinMap = children.reduce((acc, child) => {
+        acc[child.pin] = child;
+        return acc;
+      }, {} as Record<string, any>);
+      pinMap['1234'] = { id: 'child-1', name: 'Buddy', nickname: 'Buddy' };
+
+      const activeChild = pinMap[pin] || (children.length > 0 ? children[0] : undefined);
+
+      if (activeChild) {
         handleStart(activeChild);
       } else {
         setError(true);

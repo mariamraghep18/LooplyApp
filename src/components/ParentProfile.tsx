@@ -11,15 +11,22 @@ export function ParentProfile({ onBack }: { onBack: () => void }) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [newPin, setNewPin] = useState('');
 
+  const defaultProfileFields = {
+    fullName: { ar: 'أحمد محمد علي', en: 'Ahmed Mohamed Ali' },
+    occupation: { ar: 'مهندس كمبيوتر', en: 'Software Engineer' },
+    city: { ar: 'القاهرة، مصر', en: 'Cairo, Egypt' },
+    address: { ar: 'التجمع الخامس، الحي الأول', en: '1st District, New Cairo' }
+  };
+
   // Parent Profile Fields
   const [profileData, setProfileData] = useState({
     id: parentProfile?.id || 'parent1',
-    fullName: parentProfile?.fullName || (lang === 'ar' ? 'أحمد محمد علي' : 'Ahmed Mohamed Ali'),
+    fullName: parentProfile?.fullName || defaultProfileFields.fullName[lang],
     email: parentProfile?.email || 'parent@example.com',
     phone: parentProfile?.phone || '+20 100 123 4567',
-    occupation: parentProfile?.occupation || (lang === 'ar' ? 'مهندس كمبيوتر' : 'Software Engineer'),
-    city: parentProfile?.city || (lang === 'ar' ? 'القاهرة، مصر' : 'Cairo, Egypt'),
-    address: parentProfile?.address || (lang === 'ar' ? 'التجمع الخامس، الحي الأول' : '1st District, New Cairo'),
+    occupation: parentProfile?.occupation || defaultProfileFields.occupation[lang],
+    city: parentProfile?.city || defaultProfileFields.city[lang],
+    address: parentProfile?.address || defaultProfileFields.address[lang],
     profilePhoto: parentProfile?.profilePhoto || ''
   });
 

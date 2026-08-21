@@ -11,6 +11,11 @@ export default function FamilySelection({ onNavigate }: { onNavigate: (view: str
   
   const [showChildSelection, setShowChildSelection] = useState(false);
 
+  const backNavigationActions: Record<string, () => void> = {
+    true: () => setShowChildSelection(false),
+    false: () => onNavigate('portal-selection'),
+  };
+
   return (
     <div className={`min-h-screen bg-[#F8F1FE] text-[#1D1A23] flex flex-col p-6 relative overflow-x-hidden font-sans ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Decorative Ambient Background Soft Glows */}
@@ -20,13 +25,7 @@ export default function FamilySelection({ onNavigate }: { onNavigate: (view: str
       {/* Top Header Navigation */}
       <div className="w-full max-w-4xl mx-auto flex justify-between items-center mb-6 relative z-10">
         <button 
-          onClick={() => {
-            if (showChildSelection) {
-              setShowChildSelection(false);
-            } else {
-              onNavigate('portal-selection');
-            }
-          }}
+          onClick={() => backNavigationActions[String(showChildSelection)]()}
           className="p-3 bg-white rounded-full shadow-sm border border-[#E9DDFF] text-[#6B38D4] hover:bg-white transition-all"
         >
           {isRTL ? <ArrowLeft className="w-5 h-5 rotate-180" /> : <ArrowLeft className="w-5 h-5" />}

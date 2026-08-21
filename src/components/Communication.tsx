@@ -6,13 +6,29 @@ import { useLanguage } from '../shared/LanguageContext';
 export function CommunityMessages() {
   const { children } = useSharedData() as any;
   const { lang } = useLanguage();
+
+  const langDefaults = {
+    ar: {
+      defaultCategory: 'الكلام والتواصل',
+      defaultSnippet: 'موضوع تواصل ومحاكاة جديد.',
+      author: 'ولي الأمر',
+      role: 'ولي أمر متميز 🌟'
+    },
+    en: {
+      defaultCategory: 'Speech & Language',
+      defaultSnippet: 'New Talking Port discussion created.',
+      author: 'Parent',
+      role: 'Parent 🌟'
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<'community' | 'help' | 'messages'>('community');
   const [activeChatIndex, setActiveChatIndex] = useState(0);
 
   // New Talking Port Form State
   const [showNewPortModal, setShowNewPortModal] = useState(false);
   const [newPortTitle, setNewPortTitle] = useState('');
-  const [newPortCategory, setNewPortCategory] = useState(lang === 'ar' ? 'الكلام والتواصل' : 'Speech & Language');
+  const [newPortCategory, setNewPortCategory] = useState(langDefaults[lang].defaultCategory);
   const [newPortTime, setNewPortTime] = useState('10:30');
   const [newPortSnippet, setNewPortSnippet] = useState('');
 
@@ -65,9 +81,9 @@ export function CommunityMessages() {
     const newPort = {
       id: Date.now().toString(),
       title: newPortTitle,
-      author: lang === 'ar' ? 'ولي الأمر' : 'Parent',
-      role: lang === 'ar' ? 'ولي أمر متميز 🌟' : 'Parent 🌟',
-      snippet: newPortSnippet || (lang === 'ar' ? 'موضوع تواصل ومحاكاة جديد.' : 'New Talking Port discussion created.'),
+      author: langDefaults[lang].author,
+      role: langDefaults[lang].role,
+      snippet: newPortSnippet || langDefaults[lang].defaultSnippet,
       category: newPortCategory,
       time: formattedTime,
       replies: 0,
