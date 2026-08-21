@@ -1990,7 +1990,7 @@ const renderProgress = () => (
           dragMomentum={false}
           dragConstraints={{ top: -500, bottom: 500, left: -500, right: 500 }}
           style={{ position: 'fixed', bottom: '120px', right: '16px', zIndex: 50 }}
-          className={`transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing`}
+          className="transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing"
         >
           {isCameraMinimized ? (
             <button 

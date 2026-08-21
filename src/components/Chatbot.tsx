@@ -61,20 +61,20 @@ export function Chatbot() {
     
     if (normalizedQuery.includes('token') || normalizedQuery.includes('star') || normalizedQuery.includes('نجم') || normalizedQuery.includes('تعزيز') || normalizedQuery.includes('مكافأ')) {
       return lang === 'ar'
-        ? `نصائح نجاح لوحة التعزيز:\n1. حدد هدفاً واضحاً ومباشراً (مثل: ترتيب الألعاب).\n2. امنح النجمة فور وقوع السلوك الإيجابي مباشرة.\n3. اجعل المكافأة المكتسبة مرئية ومشجعة للطفل.`
-        : `Token Board success tips:\n1. Define a single, positive action target (e.g. packing up toys).\n2. Award the star immediately following the positive behavior.\n3. Keep the visual reward clear and reachable!`;
+        ? 'نصائح نجاح لوحة التعزيز:\n1. حدد هدفاً واضحاً ومباشراً (مثل: ترتيب الألعاب).\n2. امنح النجمة فور وقوع السلوك الإيجابي مباشرة.\n3. اجعل المكافأة المكتسبة مرئية ومشجعة للطفل.'
+        : 'Token Board success tips:\n1. Define a single, positive action target (e.g. packing up toys).\n2. Award the star immediately following the positive behavior.\n3. Keep the visual reward clear and reachable!';
     }
     
     if (normalizedQuery.includes('calm') || normalizedQuery.includes('sensory') || normalizedQuery.includes('هدوء') || normalizedQuery.includes('حسي')) {
       return lang === 'ar'
-        ? `تقنيات الاستجابة الحسية والاسترخاء:\n1. تمارين الضغط اللطيف على الكتفين والذراعين.\n2. الاستماع لأصوات الطبيعة الهادئة في بيئة قليلة المشتتات.\n3. استخدام الألعاب الحسية ذات الملمس الناعم.`
+        ? 'تقنيات الاستجابة الحسية والاسترخاء:\n1. تمارين الضغط اللطيف على الكتفين والذراعين.\n2. الاستماع لأصوات الطبيعة الهادئة في بيئة قليلة المشتتات.\n3. استخدام الألعاب الحسية ذات الملمس الناعم.'
         : `Sensory calming techniques for ${childName}:\n1. Try gentle deep-pressure shoulder compresses.\n2. Use a low-distraction quiet corner with soft ambient sounds.\n3. Provide textured sensory toys for tactile grounding.`;
     }
 
     if (normalizedQuery.includes('routine') || normalizedQuery.includes('schedule') || normalizedQuery.includes('روتين') || normalizedQuery.includes('جدول')) {
       return lang === 'ar'
-        ? `لتنظيم الروتين الصباحي:\n1. استخدم الجداول البصرية المصورة بالترتيب.\n2. حدد أوقات ثابته للاستيقاظ والأنشطة.\n3. عزز الطفل بعد كل خطوة منجزة بنجاح.`
-        : `For structured daily routines:\n1. Utilize a visual schedule with clear sequential pictures.\n2. Set consistent wake-up, meal, and exercise times.\n3. Offer praise after each successfully completed step.`;
+        ? 'لتنظيم الروتين الصباحي:\n1. استخدم الجداول البصرية المصورة بالترتيب.\n2. حدد أوقات ثابته للاستيقاظ والأنشطة.\n3. عزز الطفل بعد كل خطوة منجزة بنجاح.'
+        : 'For structured daily routines:\n1. Utilize a visual schedule with clear sequential pictures.\n2. Set consistent wake-up, meal, and exercise times.\n3. Offer praise after each successfully completed step.';
     }
 
     return lang === 'ar'
