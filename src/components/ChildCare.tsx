@@ -1,10 +1,10 @@
-import { useState, FormEvent } from 'react';
-import { CheckCircle2, Home, Clock, ListTodo, Plus, Target, Check, Play, Activity as ActivityIcon, Video, Brain, Heart, Zap, X, Trophy, Star } from 'lucide-react';
-import { useSharedData, Goal } from '../shared/SharedData';
+import { useState } from 'react';
+import { Plus, X, Trophy, Star } from 'lucide-react';
+import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function Plan() {
-  const { goals, children } = useSharedData() as any;
+  const { goals } = useSharedData() as any;
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState<'home' | 'therapeutics'>('home');
   const [statusFilter, setStatusFilter] = useState<'inprogress' | 'achieved'>('inprogress');
@@ -91,7 +91,7 @@ export function TokenBoards() {
   const [targetTokens, setTargetTokens] = useState(5);
   const [tokenSymbol, setTokenSymbol] = useState('⭐');
   const [rewardText, setRewardText] = useState('');
-  const [rewardSymbol, setRewardSymbol] = useState('🎮');
+  const [rewardSymbol, _setRewardSymbol] = useState('🎮');
   const [boardTime, setBoardTime] = useState('10:00');
   const [childId, setChildId] = useState('');
 

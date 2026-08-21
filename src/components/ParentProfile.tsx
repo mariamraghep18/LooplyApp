@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useSharedData } from '../shared/SharedData';
-import { Camera, User, ArrowLeft, Mail, Phone, Calendar as CalendarIcon, Check, MapPin, Lock, Briefcase, Home, Shield, Clock } from 'lucide-react';
+import { User, ArrowLeft, Check, Lock, Briefcase, Home } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function ParentProfile({ onBack }: { onBack: () => void }) {
-  const { parentProfile, setParentProfile, children, updateChild, activeChildId } = useSharedData() as any;
+  const { parentProfile, setParentProfile, updateChild, activeChildId } = useSharedData() as any;
   const { lang } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);

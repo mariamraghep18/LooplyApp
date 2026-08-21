@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { childData } from './childData';
 import { 
-  Star, Flame, Trophy, Coins, Play, CheckCircle, 
+  Star, Trophy, Play, CheckCircle, 
   Map, Target, Calendar, Gamepad2, Gift, LayoutDashboard,
-  LogOut, MessageCircle, Bell, Settings as SettingsIcon, Menu, X, Check,
-  ChevronLeft, ChevronRight, Speaker, Loader, Zap, Lock, Globe, Plus, User, Camera, ListTodo, Volume2, VolumeX
+  LogOut, Settings as SettingsIcon, X, Check,
+  ChevronRight, Zap, Globe, User, Camera, ListTodo, Volume2, VolumeX
 } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 import { useSharedData } from '../shared/SharedData';
@@ -20,7 +20,6 @@ import EmotionMirror from '../portals/Child/MiniGames/EmotionMirror';
 import MorningRoutine from '../portals/Child/MiniGames/MorningRoutine';
 import MathCounting from '../portals/Child/MiniGames/MathCounting';
 
-
 interface ChildPortalProps {
   onLogout: () => void;
 }
@@ -34,14 +33,11 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const [moodComment, setMoodComment] = useState<string>('');
   const [moodSaved, setMoodSaved] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState(getAudioMuted());
-  const { lang, setLang, t: tGlobal } = useLanguage();
-  const { children, activeChildId, goals, updateGoalProgress, buyReward, updateChild, addTokenBoard, tokenBoards, addSession, sessions, rewards } = useSharedData() as any;
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { lang, setLang } = useLanguage();
+  const { children, activeChildId, goals, buyReward, updateChild, tokenBoards, addSession, rewards } = useSharedData() as any;
   const [showToast, setShowToast] = useState(false);
-  const [sessionComplete, setSessionComplete] = useState(false);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
   const [showWinModal, setShowWinModal] = useState(false);
-  const [winStats, setWinStats] = useState({ xp: 0, coins: 0, gems: 0 });
 
   const [dailyTasksList, setDailyTasksList] = useState([
     { id: 1, title: 'Morning Stretching', titleAr: 'تمارين الإطالة الصباحية', type: 'Physical', duration: '10 min', reward: 20, icon: '🏃‍♂️', completed: true },
@@ -51,21 +47,12 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     { id: 5, title: 'Speech Practice', titleAr: 'تمارين التخاطب اليومية', type: 'SLT', duration: '10 min', reward: 25, icon: '🗣️', completed: false },
   ]);
 
-  
   const [gameCategory, setGameCategory] = useState('all');
   const [playingGame, setPlayingGame] = useState<any>(null);
-  const [gameStep, setGameStep] = useState<'intro' | 'playing' | 'completed'>('intro');
   const [rewardCategory, setRewardCategory] = useState('avatars');
   const [selectedReward, setSelectedReward] = useState<any>(null);
   const [showRewardModal, setShowRewardModal] = useState(false);
-  const [showNewTokenBoardModal, setShowNewTokenBoardModal] = useState(false);
-  const [newTokenBoard, setNewTokenBoard] = useState({
-    name: '',
-    targetTokens: 5,
-    tokenSymbol: '⭐',
-    rewardText: '',
-    rewardSymbol: '🎮'
-  });
+
   const [selectedDate, setSelectedDate] = useState<number | null>(new Date().getDate());
 
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -78,12 +65,9 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const childXp = activeChild?.xp || childData.profile.xp;
   const childCoins = activeChild?.coins || childData.profile.coins;
   const childGems = activeChild?.gems || 0;
-  const childStreak = activeChild?.streak || childData.profile.streak;
   const childAvatar = selectedAvatar !== null ? selectedAvatar : (activeChild?.photo || activeChild?.avatar || childData.profile.avatar);
 
   const childGoals = goals.filter((g: any) => g.childId === activeChildId);
-  const inProgressGoals = childGoals.filter((g: any) => g.status === 'in_progress' || g.status === 'not_started');
-  const achievedGoals = childGoals.filter((g: any) => g.status === 'achieved');
 
   const d = childData;
   const isRTL = lang === 'ar';
@@ -223,11 +207,6 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     rewards: lang === 'en' ? 'Rewards' : 'المكافآت',
     messages: lang === 'en' ? 'Messages' : 'الرسائل',
     logout: lang === 'en' ? 'Logout' : 'تسجيل الخروج',
-  };
-
-  const handleCompleteMission = () => {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const renderGames = () => {

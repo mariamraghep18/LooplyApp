@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../../shared/LanguageContext';
 import { Trophy } from 'lucide-react';
 
-export default function GameWinModal({ score, xp, coins, gems, onHome }: { score: number, xp: number, coins: number, gems: number, onHome: () => void }) {
+export default function GameWinModal({ score: _score, xp, coins, gems: _gems, onHome }: { score: number, xp: number, coins: number, gems: number, onHome: () => void }) {
   const { lang } = useLanguage();
   return (
       <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm ${lang === 'ar' ? 'rtl' : 'ltr'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>

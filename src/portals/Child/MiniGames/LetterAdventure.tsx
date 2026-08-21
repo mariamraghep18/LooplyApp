@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mic, Play, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../../../shared/LanguageContext';
 import { speakVoice } from '../../../shared/audio';

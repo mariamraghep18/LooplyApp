@@ -1,10 +1,6 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { ViewState } from '../types';
-import { 
-  Heart, LogOut, Download, MapPin, GraduationCap, ClipboardList, 
-  LayoutDashboard, Target, Calendar as CalendarIcon, Activity, 
-  MessageCircle, Star, MoreHorizontal, Settings, CreditCard, ShoppingBag, CheckSquare, Video, PieChart, Users, User, Globe 
-} from 'lucide-react';
+import { LayoutDashboard, Target, Calendar as CalendarIcon, MessageCircle, Star, CreditCard, ShoppingBag, MapPin, PieChart, User } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
@@ -16,9 +12,8 @@ interface LayoutProps {
 }
 
 export function Layout({ currentView, onNavigate, onLogout, children }: LayoutProps) {
-  const { parentProfile, familyChildren, activeChildId, appThemeColor } = useSharedData() as any;
+  const { parentProfile } = useSharedData() as any;
   const { lang, setLang } = useLanguage();
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const tabs = [
     { view: 'dashboard', label: lang === 'ar' ? 'الرئيسية' : 'Dashboard', icon: LayoutDashboard },
@@ -43,7 +38,7 @@ export function Layout({ currentView, onNavigate, onLogout, children }: LayoutPr
           title={lang === 'ar' ? 'عرض الملف الشخصي' : 'View Profile'}
         >
           <div className="w-11 h-11 bg-[#ECE8FD] group-hover:bg-[#633BE8] group-hover:text-white rounded-2xl flex items-center justify-center text-[#633BE8] border border-[#633BE8]/20 shadow-xs transition-all">
-             <span className="font-extrabold text-2xl tracking-tight">L</span>
+             <span className="font-extrabold text-2xl tracking-tight">L</nspan>
           </div>
           <div>
             <h1 className="text-[11px] font-bold text-[#73758C] uppercase tracking-wider group-hover:text-[#633BE8] transition-colors">

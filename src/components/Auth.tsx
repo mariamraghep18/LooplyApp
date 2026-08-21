@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User as UserIcon, ArrowRight, Shield, Phone, Calendar as CalendarIcon, Upload, Paperclip, CreditCard, Heart, X, Check, Globe, Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowRight, Shield, Phone, Upload, Paperclip, CreditCard, Heart, Check, Globe, Eye, EyeOff, ChevronLeft } from 'lucide-react';
 import { ViewState } from '../types';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
