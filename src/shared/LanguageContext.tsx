@@ -8,7 +8,7 @@ interface LanguageContextType {
   t: (key: string) => any;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>();
 
 const translations = {
   en: {
