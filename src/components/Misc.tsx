@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from 'react';
-import { Calendar as CalIcon, ShoppingBag, CreditCard, Shield, LifeBuoy, Search, MessageSquare, Phone, BookOpen, AlertTriangle, Download, Lock, ChevronLeft, ChevronRight, X, MapPin, User, Clock, Edit2, Check } from 'lucide-react';
+import { ShoppingBag, Search, MessageSquare, Phone, BookOpen, AlertTriangle, Download, User, Check } from 'lucide-react';
 import { useSharedData } from "../shared/SharedData";
 import { useLanguage } from "../shared/LanguageContext";
 
@@ -333,7 +333,7 @@ export function Support() {
           const Icon = channel.icon;
           return (
             <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 hover:shadow-md transition-shadow cursor-pointer">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${channel.bg}`}>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${channel.bg}`}>  
                 <Icon className={`w-6 h-6 ${channel.color}`} />
               </div>
               <h3 className="font-bold text-slate-800 mb-1">{channel.title}</h3>
@@ -347,7 +347,7 @@ export function Support() {
 }
 
 export function Settings() {
-  const { parentProfile, setParentProfile, children, updateChild, activeChildId } = useSharedData() as any;
+  const { parentProfile, setParentProfile } = useSharedData() as any;
   const { lang } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);

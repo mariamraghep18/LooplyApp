@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ChevronLeft, Globe, Delete } from 'lucide-react';
+import { ChevronLeft, Globe, Delete } from 'lucide-react';
 import { useLanguage } from '../../shared/LanguageContext';
 import { useSharedData } from '../../shared/SharedData';
 import { speakVoice } from '../../shared/audio';

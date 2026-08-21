@@ -1,9 +1,9 @@
-import { PlayCircle, MapPin, Navigation, Video } from 'lucide-react';
+import { PlayCircle, Video } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function VideoRecords() {
-  const { sessions, children, activeChildId } = useSharedData();
+  const { sessions, children } = useSharedData();
   const { lang } = useLanguage();
   const childSessions = sessions.filter(s => s.status === 'completed' && s.videoUrl);
 
@@ -23,7 +23,7 @@ export function VideoRecords() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {childSessions.map((session, i) => {
+          {childSessions.map((session) => {
             const child = children.find(c => c.id === session.childId);
             return (
               <div key={session.id} className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-[#ECE8FD] shadow-xs hover:border-[#633BE8] transition-all">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, X, Bot, Sparkles, User, RefreshCw, Volume2 } from 'lucide-react';
+import { Send, X, Bot, Sparkles } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 import { useSharedData } from '../shared/SharedData';
 

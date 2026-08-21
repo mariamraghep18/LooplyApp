@@ -7,7 +7,7 @@ import { Plan, TokenBoards } from './components/ChildCare';
 import { Report } from './components/Analytics';
 import { VideoRecords, FindMyChild } from './components/MediaAndLocation';
 import { CommunityMessages } from './components/Communication';
-import { Calendar, Marketplace, Billing, Support, Settings } from './components/Misc';
+import { Calendar, Marketplace, Billing, Support } from './components/Misc';
 import { ParentProfile } from './components/ParentProfile';
 import ChildPortal from './ChildPortal/ChildPortal';
 import { LanguageProvider } from './shared/LanguageContext';

@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Send, Search, Users, MessageSquare, UserPlus, HelpCircle, BookOpen, LifeBuoy, PhoneCall, ShieldCheck, ChevronRight, Clock, X, Plus } from 'lucide-react';
+import { Send, Search, Users, MessageSquare, HelpCircle, X, Plus } from 'lucide-react';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
 
 export function CommunityMessages() {
   const { children } = useSharedData() as any;
   const { lang } = useLanguage();
-  const firstChildName = children[0]?.name || (lang === 'ar' ? 'الطفل' : 'the child');
   const [activeTab, setActiveTab] = useState<'community' | 'help' | 'messages'>('community');
   const [activeChatIndex, setActiveChatIndex] = useState(0);
 
