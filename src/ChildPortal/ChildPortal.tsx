@@ -37,7 +37,7 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const { children, activeChildId, goals, buyReward, updateChild, tokenBoards, addSession, rewards, updateGoalProgress: _updateGoalProgress, addTokenBoard: _addTokenBoard, sessions: _sessions } = useSharedData() as any;
   const [_sidebarOpen, _setSidebarOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [sessionComplete, setSessionComplete] = useState(false);
+  const [sessionComplete, _setSessionComplete] = useState(false);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
   const [showWinModal, setShowWinModal] = useState(false);
   const [winStats, _setWinStats] = useState({ xp: 0, coins: 0, gems: 0 });
