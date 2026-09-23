@@ -100,6 +100,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <button onClick={() => setShowAddChild(true)} className="bg-white hover:bg-[#ECE8FD] transition-colors text-[#633BE8] px-5 py-2.5 rounded-2xl font-black flex items-center gap-2 text-xs shadow-md">
             <Plus className="w-4 h-4" /> {lang === 'ar' ? 'إضافة طفل جديد' : 'Add New Child'}
           </button>
+          <button onClick={() => onNavigate('report')} className="bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 transition-colors text-white px-5 py-2.5 rounded-2xl font-black flex items-center gap-2 text-xs shadow-md">
+            <Download className="w-4 h-4" /> {lang === 'ar' ? 'تحميل التقرير' : 'Download Report'}
+          </button>
         </div>
         
         {/* Decorative Light Blob */}
@@ -232,8 +235,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-extrabold text-[#2A2B47] mb-1">{lang === 'ar' ? 'العمر' : 'Age'}</label>
-                  <input required type="text" value={newChildAge} onChange={e => setNewChildAge(e.target.value)} className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold" placeholder="e.g. 7" />
+                  <label className="block text-xs font-extrabold text-[#2A2B47] mb-1">{lang === 'ar' ? 'تاريخ الميلاد' : 'Date of Birth'}</label>
+                  <input required type="date" value={newChildAge} onChange={e => setNewChildAge(e.target.value)} className="w-full p-3 border border-[#ECE8FD] rounded-xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold" />
                 </div>
                 <div>
                   <label className="block text-xs font-extrabold text-[#2A2B47] mb-1">{lang === 'ar' ? 'الصف الدراسي' : 'Grade'}</label>
@@ -299,42 +302,26 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     : 'Upload Medical Reports, Doctor Consultations, Assessments & Prescriptions.'}
                 </p>
 
-                {/* Document Type Selector & Upload Button */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <select 
-                    id="docTypeSelect"
-                    className="p-2.5 border border-[#ECE8FD] rounded-xl bg-white text-[#2A2B47] font-extrabold text-xs"
-                  >
-                    <option value="Medical Report">{lang === 'ar' ? 'تقرير طبي (Medical Report)' : 'Medical Report'}</option>
-                    <option value="Doctor Consultation">{lang === 'ar' ? 'استشارة طبيب (Doctor Consultation)' : 'Doctor Consultation'}</option>
-                    <option value="Medical Assessment">{lang === 'ar' ? 'تقييم طبي (Medical Assessment)' : 'Medical Assessment'}</option>
-                    <option value="Prescription">{lang === 'ar' ? 'روشتة علاجية (Prescription)' : 'Prescription'}</option>
-                    <option value="Diagnosis Document">{lang === 'ar' ? 'مستند تشخيص (Diagnosis Doc)' : 'Diagnosis Document'}</option>
-                    <option value="Other Document">{lang === 'ar' ? 'مستند آخر (Other Document)' : 'Other Document'}</option>
-                  </select>
-
-                  <label className="flex items-center justify-center gap-2 p-2.5 border-2 border-dashed border-[#633BE8]/40 rounded-xl bg-white text-[#633BE8] font-extrabold text-xs cursor-pointer hover:bg-[#ECE8FD]/40 transition-colors">
-                    <Plus className="w-4 h-4" />
-                    <span>{lang === 'ar' ? 'إرفاق ملف' : 'Upload File'}</span>
-                    <input 
-                      type="file" 
-                      onChange={(e) => {
-                        const selectEl = document.getElementById('docTypeSelect') as HTMLSelectElement;
-                        const docType = selectEl ? selectEl.value : 'Medical Document';
-                        if (e.target.files && e.target.files.length > 0) {
-                          const file = e.target.files[0];
-                          setUploadedFiles(prev => [...prev, {
-                            name: file.name,
-                            type: docType,
-                            size: `${(file.size / 1024 / 1024).toFixed(1)} MB`
-                          }]);
-                        }
-                      }} 
-                      className="hidden" 
-                      accept=".pdf,.doc,.docx,.jpg,.png" 
-                    />
-                  </label>
-                </div>
+                {/* Upload Button */}
+                <label className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-[#633BE8]/40 rounded-xl bg-white text-[#633BE8] font-extrabold text-xs cursor-pointer hover:bg-[#ECE8FD]/40 transition-colors w-full">
+                  <Plus className="w-4 h-4" />
+                  <span>{lang === 'ar' ? 'إرفاق ملف' : 'Upload File'}</span>
+                  <input 
+                    type="file" 
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        setUploadedFiles(prev => [...prev, {
+                          name: file.name,
+                          type: lang === 'ar' ? 'مستند مرفق' : 'Attachment',
+                          size: `${(file.size / 1024 / 1024).toFixed(1)} MB`
+                        }]);
+                      }
+                    }} 
+                    className="hidden" 
+                    accept=".pdf,.doc,.docx,.jpg,.png" 
+                  />
+                </label>
 
                 {/* Attached Files List */}
                 {uploadedFiles.length > 0 && (
@@ -355,26 +342,6 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Integrated Download Report Section inside Add Child Flow */}
-              <div className="bg-[#FFF7ED] p-3.5 rounded-2xl border border-[#FDE68A] flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Download className="w-4 h-4 text-[#D97706]" />
-                  <span className="text-xs font-extrabold text-[#92400E]">
-                    {lang === 'ar' ? 'تحميل التقرير الطبي الشامل' : 'Download Complete Child Report'}
-                  </span>
-                </div>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    setShowAddChild(false);
-                    onNavigate('report');
-                  }}
-                  className="bg-[#D97706] text-white text-[11px] font-black px-3.5 py-1.5 rounded-xl hover:bg-[#B45309] transition-colors shadow-xs"
-                >
-                  {lang === 'ar' ? 'تحميل الآن' : 'Download'}
-                </button>
               </div>
 
               <div className="bg-[#FAFAFD] p-4 rounded-xl border border-[#ECE8FD]">

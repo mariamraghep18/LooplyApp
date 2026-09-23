@@ -256,18 +256,13 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
 
   const [formData, setFormData] = useState({
     fullName: '',
-    birthDate: '',
     email: '',
-    confirmEmail: '',
     phone: '',
     password: '',
     confirmPassword: '',
     profilePhoto: '',
     faceAuthEnabled: false,
     idCardPhoto: '',
-    determinationType: 'طيف التوحد / Autism Spectrum',
-    customDetermination: '',
-    childAttachments: [] as { name: string; url: string; type: string; size: string }[]
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -285,76 +280,28 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
     }
   };
 
-  const handleDocumentAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      Array.from(files).forEach((file: File) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            setFormData(prev => ({
-              ...prev,
-              childAttachments: [
-                ...prev.childAttachments,
-                {
-                  name: file.name,
-                  url: event.target!.result as string,
-                  type: file.type || 'document',
-                  size: `${(file.size / 1024).toFixed(1)} KB`
-                }
-              ]
-            }));
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
-
   const [authError, setAuthError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.email !== formData.confirmEmail) {
-      setAuthError(lang === 'ar' ? "البريد الإلكتروني وتأكيد البريد غير متطابقين" : "Email addresses do not match");
-      return;
-    }
     if (formData.password !== formData.confirmPassword) {
       setAuthError(lang === 'ar' ? "كلمة المرور غير متطابقة" : "Passwords do not match");
       return;
     }
     setAuthError('');
-    
-    const finalDetermination = formData.determinationType === 'Other' || formData.determinationType === 'أخرى'
-      ? (formData.customDetermination || 'Custom Special Need') 
-      : formData.determinationType;
 
     setParentProfile({
       id: Math.random().toString(36).substr(2, 9),
       fullName: formData.fullName,
-      birthDate: formData.birthDate,
       email: formData.email,
       phone: formData.phone,
       profilePhoto: formData.profilePhoto,
       faceAuthEnabled: formData.faceAuthEnabled,
       idCardPhoto: formData.idCardPhoto,
-      determinationType: finalDetermination,
-      childAttachments: formData.childAttachments,
     });
     
     onNavigate('login');
   };
-
-  const determinationOptions = [
-    { id: 'autism', label: lang === 'ar' ? 'طيف التوحد' : 'Autism Spectrum' },
-    { id: 'adhd', label: lang === 'ar' ? 'فرط الحركة وتشتت الانتباه (ADHD)' : 'ADHD (Attention Deficit)' },
-    { id: 'speech', label: lang === 'ar' ? 'اضطرابات النطق والكلام' : 'Speech & Language Delay' },
-    { id: 'down', label: lang === 'ar' ? 'متلازمة داون' : 'Down Syndrome' },
-    { id: 'cp', label: lang === 'ar' ? 'الشلل الدماغي' : 'Cerebral Palsy' },
-    { id: 'learning', label: lang === 'ar' ? 'صعوبات التعلم' : 'Learning Difficulties' },
-    { id: 'sensory', label: lang === 'ar' ? 'اضطراب المعالجة الحسية' : 'Sensory Processing' },
-    { id: 'other', label: lang === 'ar' ? 'أخرى' : 'Other' },
-  ];
 
   return (
     <div className="min-h-screen bg-[#F8F1FE] text-[#1D1A23] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden font-sans">
@@ -434,40 +381,21 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
               </div>
             </div>
 
-            {/* Grid Inputs: Email Address & Confirm Email */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
-                  {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
-                </label>
-                <div className="relative">
-                  <input
-                    required
-                    type="email"
-                    value={formData.email}
-                    onChange={e => setFormData({...formData, email: e.target.value})}
-                    placeholder="adam@example.com"
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
-                  />
-                  <Mail className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
-                  {lang === 'ar' ? 'تأكيد البريد الإلكتروني' : 'Confirm Email'}
-                </label>
-                <div className="relative">
-                  <input
-                    required
-                    type="email"
-                    value={formData.confirmEmail}
-                    onChange={e => setFormData({...formData, confirmEmail: e.target.value})}
-                    placeholder="adam@example.com"
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
-                  />
-                  <Mail className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
-                </div>
+            {/* Input: Email Address */}
+            <div>
+              <label className="block text-xs font-semibold text-[#494454] mb-1">
+                {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
+              </label>
+              <div className="relative">
+                <input
+                  required
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData({...formData, email: e.target.value})}
+                  placeholder="adam@example.com"
+                  className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
+                />
+                <Mail className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
               </div>
             </div>
 
@@ -514,36 +442,21 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
               </div>
             </div>
 
-            {/* Birth Date & Phone */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
-                  {lang === 'ar' ? 'تاريخ الميلاد' : 'Birth Date'}
-                </label>
+            {/* Phone Number */}
+            <div>
+              <label className="block text-xs font-semibold text-[#494454] mb-1">
+                {lang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
+              </label>
+              <div className="relative">
                 <input
                   required
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={e => setFormData({...formData, birthDate: e.target.value})}
-                  className="w-full h-14 px-4 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={e => setFormData({...formData, phone: e.target.value})}
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
-                  {lang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
-                </label>
-                <div className="relative">
-                  <input
-                    required
-                    type="tel"
-                    value={formData.phone}
-                    onChange={e => setFormData({...formData, phone: e.target.value})}
-                    placeholder="+1 (555) 000-0000"
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
-                  />
-                  <Phone className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
-                </div>
+                <Phone className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
               </div>
             </div>
 
@@ -592,44 +505,6 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                   <div className="w-11 h-6 bg-[#CBC3D7] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#6B38D4]"></div>
                 </label>
               </div>
-            </div>
-
-            {/* Child Special Needs Diagnosis Selection */}
-            <div className="p-4 rounded-2xl border space-y-2 bg-[#F8F1FE]/50 border-[#E9DDFF]">
-              <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-[#6B38D4]" />
-                <label className="block text-xs font-bold text-[#1D1A23]">
-                  ❤️ {lang === 'ar' ? 'تحديد نوع الهمم لدى الطفل' : "Child's Diagnosis / Special Needs Category"}
-                </label>
-              </div>
-              <select
-                value={formData.determinationType}
-                onChange={e => setFormData({ ...formData, determinationType: e.target.value })}
-                className="w-full p-3 border rounded-2xl bg-white text-xs font-bold text-[#1D1A23] border-[#ECE8FD]"
-              >
-                {determinationOptions.map(opt => (
-                  <option key={opt.id} value={opt.label}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Attachments Section */}
-            <div className="p-4 rounded-2xl border space-y-2 bg-[#F8F1FE]/50 border-[#E9DDFF]">
-              <div className="flex items-center gap-2">
-                <Paperclip className="w-4 h-4 text-[#6B38D4]" />
-                <label className="block text-xs font-bold text-[#1D1A23]">
-                  {lang === 'ar' ? 'إرفاق مستندات أو تقارير عن الطفل' : 'Child Attachments & Reports'}
-                </label>
-              </div>
-              <label className="flex border-2 border-dashed border-[#E9DDFF] rounded-2xl p-3 bg-white text-center cursor-pointer hover:bg-[#F3EBF8] transition-colors items-center justify-center gap-2">
-                <Paperclip className="w-4 h-4 text-[#6B38D4]" />
-                <span className="text-xs font-bold text-[#6B38D4]">
-                  {lang === 'ar' ? 'إرفاق تقارير جديدة' : 'Upload Files'}
-                </span>
-                <input type="file" multiple className="hidden" onChange={handleDocumentAttach} />
-              </label>
             </div>
 
             {/* Primary Action Button */}

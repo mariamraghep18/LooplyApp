@@ -5,7 +5,8 @@ import {
   Star, Trophy, Play, CheckCircle,
   Map, Target, Calendar, Gamepad2, Gift, LayoutDashboard,
   LogOut, Settings as SettingsIcon, X, Check,
-  ChevronRight, Zap, Globe, User, Camera, ListTodo, Volume2, VolumeX, Lock
+  ChevronRight, Zap, Globe, User, Camera, ListTodo, Volume2, VolumeX, Lock,
+  Wind, BookOpen, SmilePlus, ChevronDown, ChevronUp, RotateCcw, ArrowLeft, Heart, Sparkles, Coins
 } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 import { useSharedData } from '../shared/SharedData';
@@ -24,7 +25,7 @@ interface ChildPortalProps {
   onLogout: () => void;
 }
 
-type View = 'dashboard' | 'games' | 'goals' | 'achievements' | 'schedule' | 'rewards' | 'tokenboard' | 'messages' | 'challenges' | 'homeplan' | 'progress' | 'profile' | 'feel-good' | 'achieved';
+type View = 'dashboard' | 'games' | 'goals' | 'achievements' | 'schedule' | 'rewards' | 'tokenboard' | 'messages' | 'challenges' | 'homeplan' | 'progress' | 'profile' | 'feel-good' | 'achieved' | 'calm-corner' | 'stories' | 'mood-checkin';
 
 export default function ChildPortal({ onLogout }: ChildPortalProps) {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -66,6 +67,68 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     rewardSymbol: '🎮'
   });
   const [selectedDate, setSelectedDate] = useState<number | null>(new Date().getDate());
+
+  // --- 😌 Calm Corner Breathing Exercise State ---
+  const [selectedBreathingExercise, setSelectedBreathingExercise] = useState<any | null>(null);
+  const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold1' | 'exhale' | 'hold2'>('inhale');
+  const [breathingTimer, setBreathingTimer] = useState<number>(4);
+  const [breathingRound, setBreathingRound] = useState<number>(1);
+  const [isBreathingActive, setIsBreathingActive] = useState<boolean>(false);
+
+  // --- 📖 Social Stories State ---
+  const [selectedStory, setSelectedStory] = useState<any | null>(null);
+  const [storyStepIndex, setStoryStepIndex] = useState<number>(0);
+
+  // --- 💖 Multi-Step Mood Check-in State ---
+  const [moodStep, setMoodStep] = useState<number>(1);
+  const [selectedMoodObj, setSelectedMoodObj] = useState<any | null>(null);
+  const [moodIntensity, setMoodIntensity] = useState<string>('Somewhat');
+  const [selectedMoodReason, setSelectedMoodReason] = useState<string>('');
+  const [customMoodReasonText, setCustomMoodReasonText] = useState<string>('');
+
+  // --- 📈 Dashboard Progress Accordion State ---
+  const [isDashboardProgressExpanded, setIsDashboardProgressExpanded] = useState<boolean>(false);
+
+  // Breathing Exercise Timer Effect
+  useEffect(() => {
+    let interval: any = null;
+    if (isBreathingActive && selectedBreathingExercise) {
+      interval = setInterval(() => {
+        setBreathingTimer(prev => {
+          if (prev > 1) return prev - 1;
+          
+          // Phase Progression Logic
+          const pattern = selectedBreathingExercise.pattern;
+          if (breathingPhase === 'inhale') {
+            if (pattern.hold1 > 0) {
+              setBreathingPhase('hold1');
+              return pattern.hold1;
+            } else {
+              setBreathingPhase('exhale');
+              return pattern.exhale;
+            }
+          } else if (breathingPhase === 'hold1') {
+            setBreathingPhase('exhale');
+            return pattern.exhale;
+          } else if (breathingPhase === 'exhale') {
+            if (pattern.hold2 > 0) {
+              setBreathingPhase('hold2');
+              return pattern.hold2;
+            } else {
+              setBreathingPhase('inhale');
+              setBreathingRound(r => (r >= 3 ? 3 : r + 1));
+              return pattern.inhale;
+            }
+          } else {
+            setBreathingPhase('inhale');
+            setBreathingRound(r => (r >= 3 ? 3 : r + 1));
+            return pattern.inhale;
+          }
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isBreathingActive, selectedBreathingExercise, breathingPhase]);
 
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null);
@@ -454,114 +517,611 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
     );
   };
 
-  const renderFeelGoodCorner = () => {
-    const moods = [
-      { id: 'happy', emoji: '😊', title: 'Happy', titleAr: 'سعيد' },
-      { id: 'excited', emoji: '😄', title: 'Excited', titleAr: 'متحمس' },
-      { id: 'neutral', emoji: '😐', title: 'Okay / Neutral', titleAr: 'عادي / محايد' },
-      { id: 'sad', emoji: '😢', title: 'Sad', titleAr: 'حزين' },
-      { id: 'angry', emoji: '😡', title: 'Angry', titleAr: 'غاضب' },
-      { id: 'worried', emoji: '😟', title: 'Worried', titleAr: 'قلق' },
-      { id: 'tired', emoji: '😴', title: 'Tired', titleAr: 'متعب' },
-      { id: 'scared', emoji: '😨', title: 'Scared', titleAr: 'خائف' },
+  // ==========================================
+  // 1. 😌 Calm Corner (Breathing Exercises Flow)
+  // ==========================================
+  const renderCalmCorner = () => {
+    const exercises = [
+      { id: 'box', title: 'Box Breathing', titleAr: 'التنفس المربعي', subtitle: 'Breathe in a square — great for staying calm and focused.', subtitleAr: 'تنفس على شكل مربع — ممتاز للهدوء والتركيز.', color: 'bg-emerald-50 border-emerald-300 text-emerald-800', icon: '🟩', pattern: { inhale: 4, hold1: 4, exhale: 4, hold2: 4 } },
+      { id: '478', title: '4-7-8 Breathing', titleAr: 'تنفس 4-7-8', subtitle: 'A calming breath pattern to help you relax fast.', subtitleAr: 'نمط تنفس مهدئ يساعدك على الاسترخاء بسرعة.', color: 'bg-sky-50 border-sky-300 text-sky-800', icon: '🟦', pattern: { inhale: 4, hold1: 7, exhale: 8, hold2: 0 } },
+      { id: 'belly', title: 'Belly Breathing', titleAr: 'تنفس البطن', subtitle: 'Slow, deep breaths that fill your whole belly.', subtitleAr: 'أنفاس بطيئة وعميقة تملأ بطنك بالهواء.', color: 'bg-amber-50 border-amber-300 text-amber-800', icon: '🟨', pattern: { inhale: 4, hold1: 4, exhale: 6, hold2: 0 } },
+      { id: '5finger', title: '5-Finger Breathing', titleAr: 'تنفس الأصابع الخمسة', subtitle: 'Trace your fingers — breathe in going up, out going down.', subtitleAr: 'تتبع أصابعك — شهيق مع الصعود، وزفير مع الهبوط.', color: 'bg-purple-50 border-purple-300 text-purple-800', icon: '🟪', pattern: { inhale: 3, hold1: 1, exhale: 3, hold2: 1 } },
     ];
 
-    const handleSaveMood = () => {
-      if (!selectedMood) return;
-      setMoodSaved(true);
-      playAudioFeedback('success');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+    const startExercise = (ex: any) => {
+      setSelectedBreathingExercise(ex);
+      setBreathingPhase('inhale');
+      setBreathingTimer(ex.pattern.inhale);
+      setBreathingRound(1);
+      setIsBreathingActive(true);
+      playAudioFeedback('tap');
     };
 
+    const stopExercise = () => {
+      setIsBreathingActive(false);
+      setSelectedBreathingExercise(null);
+      playAudioFeedback('click');
+    };
+
+    // Exercise Player Screen
+    if (selectedBreathingExercise) {
+      const getPhaseLabel = () => {
+        if (breathingPhase === 'inhale') return lang === 'ar' ? 'شهيق (Inhale)' : 'Inhale';
+        if (breathingPhase === 'hold1' || breathingPhase === 'hold2') return lang === 'ar' ? 'حبس النفس (Hold)' : 'Hold';
+        return lang === 'ar' ? 'زفير (Exhale)' : 'Exhale';
+      };
+
+      return (
+        <div className="space-y-6 max-w-xl mx-auto pt-4 pb-28 font-sans animate-fade-in text-center">
+          {/* Header */}
+          <div className="bg-white p-6 rounded-3xl border border-[#ECE8FD] shadow-xs flex items-center justify-between">
+            <button
+              onClick={stopExercise}
+              className="p-2.5 bg-slate-100 text-slate-600 rounded-2xl hover:bg-slate-200 transition-colors flex items-center gap-1 text-xs font-bold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{lang === 'ar' ? 'الرجوع' : 'Back'}</span>
+            </button>
+            <div>
+              <h2 className="text-xl font-black text-[#2A2B47]">{selectedBreathingExercise.title}</h2>
+              <span className="text-xs font-extrabold text-[#633BE8] bg-[#ECE8FD] px-3 py-1 rounded-full inline-block mt-1">
+                {lang === 'ar' ? `الجولة ${breathingRound} من 3` : `Round ${breathingRound} of 3`}
+              </span>
+            </div>
+            <div className="w-10 h-10"></div>
+          </div>
+
+          {/* Player Circle animation */}
+          <div className="bg-white p-8 rounded-3xl border border-[#ECE8FD] shadow-sm flex flex-col items-center justify-center space-y-6">
+            <div className="relative w-56 h-56 flex items-center justify-center">
+              {/* Outer pulsing ring */}
+              <div
+                className={`absolute inset-0 rounded-full border-4 transition-all duration-1000 ${
+                  breathingPhase === 'inhale'
+                    ? 'scale-110 border-[#633BE8] bg-purple-100/50'
+                    : breathingPhase === 'exhale'
+                    ? 'scale-90 border-[#70E4BE] bg-teal-100/30'
+                    : 'scale-100 border-amber-300 bg-amber-100/30'
+                }`}
+              ></div>
+
+              {/* Inner Circle timer */}
+              <div className="relative z-10 w-40 h-40 bg-gradient-to-br from-[#633BE8] to-[#9C7AF2] rounded-full text-white flex flex-col items-center justify-center shadow-xl">
+                <span className="text-4xl font-black">{breathingTimer}</span>
+                <span className="text-xs font-bold opacity-80 uppercase tracking-wider">
+                  {lang === 'ar' ? 'ثواني' : 'seconds'}
+                </span>
+              </div>
+            </div>
+
+            {/* Current Phase Label */}
+            <div>
+              <h3 className="text-2xl font-black text-[#2A2B47]">{getPhaseLabel()}</h3>
+              <p className="text-xs font-semibold text-[#73758C] mt-1">
+                {lang === 'ar' ? 'اتبع التنفس ببطء وراحة...' : 'Follow the circle rhythm slowly...'}
+              </p>
+            </div>
+
+            {/* Progress Dots */}
+            <div className="flex gap-2 justify-center">
+              {[1, 2, 3].map(r => (
+                <div
+                  key={r}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    r <= breathingRound ? 'bg-[#633BE8] scale-110' : 'bg-slate-200'
+                  }`}
+                ></div>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <button
+              onClick={stopExercise}
+              className="px-6 py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-xs rounded-2xl border border-rose-200 transition-colors flex items-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>{lang === 'ar' ? 'إيقاف / إعادة الضبط' : 'Stop / Reset'}</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Menu Screen
     return (
       <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
         {/* Header */}
-        <div className="flex justify-between items-center bg-gradient-to-r from-[#FF6086] via-[#9C7AF2] to-[#633BE8] p-6 rounded-3xl text-white shadow-md">
+        <div className="flex justify-between items-center bg-gradient-to-r from-[#3B82F6] via-[#633BE8] to-[#9C7AF2] p-6 rounded-3xl text-white shadow-md">
           <div>
+            <span className="text-[10px] font-black uppercase bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full text-white inline-block mb-1">
+              🧘 {lang === 'ar' ? 'تصفية الذهن والتنفس' : 'Mindfulness & Breathing'}
+            </span>
             <h2 className="text-2xl font-black flex items-center gap-2">
-              💖 {lang === 'ar' ? 'ركن الشعور الجميل (Feel Good Corner)' : 'Feel Good Corner'}
+              😌 {lang === 'ar' ? 'ركن الهدوء (Calm Corner)' : 'Calm Corner'}
             </h2>
             <p className="text-xs font-semibold text-white/90 mt-1">
-              {lang === 'ar' ? 'كيف تشعر الآن يا بطل؟ أخبرنا بمشاعرك!' : 'How are you feeling right now? Let us know!'}
+              {lang === 'ar' ? 'تنفس ببطء واشعر بالراحة والاطمئنان' : 'Breathe slowly and feel better'}
             </p>
           </div>
           <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-3xl shadow-xs">
-            🌈
+            🌬️
           </div>
         </div>
 
-        {/* Mood Check-In Emojis */}
-        <div className="bg-white rounded-3xl p-6 border border-[#ECE8FD] shadow-xs space-y-4">
-          <h3 className="font-black text-[#2A2B47] text-base flex items-center gap-2">
-            😊 {lang === 'ar' ? 'اختر شعورك الحالي (Mood Check-In)' : 'Choose your current mood'}
-          </h3>
+        {/* Exercises List */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {exercises.map(ex => (
+            <div
+              key={ex.id}
+              onClick={() => startExercise(ex)}
+              className={`p-6 rounded-3xl border-2 shadow-xs cursor-pointer hover:scale-[1.02] transition-all flex flex-col justify-between space-y-4 ${ex.color}`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="text-4xl">{ex.icon}</div>
+                <span className="bg-white/80 backdrop-blur-xs text-xs font-black px-3 py-1 rounded-full shadow-2xs">
+                  {lang === 'ar' ? 'بدء التمرين' : 'Start'}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-black">{lang === 'ar' ? ex.titleAr : ex.title}</h3>
+                <p className="text-xs font-medium opacity-90 mt-1 leading-relaxed">
+                  {lang === 'ar' ? ex.subtitleAr : ex.subtitle}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {moods.map((m) => {
-              const isSelected = selectedMood === m.id;
-              return (
+  // ==========================================
+  // 2. 📖 Social Stories Screen (Rich Illustrated Storybooks)
+  // ==========================================
+  const renderStories = () => {
+    const stories = [
+      {
+        id: 'saying-hello',
+        title: 'Saying Hello at School',
+        titleAr: 'سامي وإلقاء التحية في المدرسة',
+        subtitle: 'A lovely story about making new friends with a friendly greeting.',
+        subtitleAr: 'قصة ممتعة عن تكوين أصدقاء جدد بإلقاء التحية والابتسامة.',
+        icon: '👋',
+        tags: ['Greetings', '5 pages'],
+        tagsAr: ['التحيات', '5 صفحات'],
+        steps: [
+          { step: 1, text: 'Every morning, Sami arrives at school feeling a little shy. Today, he notices his classmate Ziad playing near the blocks.', textAr: 'كل صباح، يصل سامي إلى المدرسة وهو يشعر بقليل من الخجل. اليوم، لاحظ زميله زياد يلعب بالقرب من منطقة المكعبات.', emoji: '🏫' },
+          { step: 2, text: 'Sami remembers that a warm smile is the magic key to starting a friendship. He walks over with a gentle smile on his face.', textAr: 'تذكر سامي أن الابتسامة الدافئة هي المفتاح السحري لبدء الصداقة. فمشى بهدوء نحو زياد والابتسامة ترتسم على وجهه.', emoji: '😊' },
+          { step: 3, text: 'Sami raises his hand, waves gently, and says in a clear, friendly voice: "Good morning Ziad! How are you today?"', textAr: 'رفع سامي يده ولوح بلطف وقال بصوت واضح ومبهج: "صباح الخير يا زياد! كيف حالك اليوم؟"', emoji: '👋' },
+          { step: 4, text: 'Ziad smiles brightly and responds: "Hi Sami! I am great! Do you want to build a giant castle with me?"', textAr: 'ابتسم زياد بابتسامة عريضة وأجاب: "أهلاً يا سامي! أنا بخير، هل تحب أن نبني قلعة عملاقة معاً؟"', emoji: '🏰' },
+          { step: 5, text: 'Sami feels so proud and happy inside. Saying a simple, friendly hello helped him make a wonderful new friend!', textAr: 'شعر سامي بالفخر والسعادة في داخله. إلقاء التحية البسيطة والودودة ساعده في اكتشاف صديق جديد ورائع!', emoji: '🎉' },
+        ]
+      },
+      {
+        id: 'taking-turns',
+        title: 'Taking Turns with Toys',
+        titleAr: 'سارة وسامي وتبادل الأدوار',
+        subtitle: 'Learning how sharing toys creates double the happiness for everyone.',
+        subtitleAr: 'كيف يخلق مشاركة الألعاب وتبادل الأدوار الفرح والمرح للجميع.',
+        icon: '🤝',
+        tags: ['Sharing', '5 pages'],
+        tagsAr: ['المشاركة', '5 صفحات'],
+        steps: [
+          { step: 1, text: 'Sarah was playing with the shiny red toy car. Sami really wanted to play with it too, but he remembered that taking turns is best.', textAr: 'كانت سارة تلعب بالسيارة الحمراء اللامعة. كان سامي يرغب بشدة في اللعب بها، لكنه تذكر أن تبادل الأدوار هو الأفضل.', emoji: '🚗' },
+          { step: 2, text: 'Sami walked over gently and asked with a polite voice: "Sarah, can I have a turn with the car when you are finished?"', textAr: 'اقترب سامي بلطف وقال بصوت مؤدب: "سارة، هل يمكنني أن آخذ دوراً بالسيارة عندما تنتهين؟"', emoji: '💬' },
+          { step: 3, text: 'Sarah nodded happily and said: "Sure Sami! Let me zoom it down the ramp two more times, and then it is your turn."', textAr: 'هزت سارة رأسها بسعادة وقالت: "بالتأكيد يا سامي! سأدحرجها على المنحدر مرتين إضافيتين، ثم يأتي دورك."', emoji: '🏁' },
+          { step: 4, text: 'Sami waited patiently, counting to 10 in his mind while watching the car zoom. Waiting felt easy knowing his turn was coming.', textAr: 'انتظر سامي بصبر، وعد في عقله حتى 10 وهو يشاهد السيارة المسرعة. كان الانتظار سهلاً لأنه يعلم أن دوره قادم.', emoji: '⏳' },
+          { step: 5, text: 'Sarah handed the car to Sami with a big smile. They took turns back and forth and had double the fun together!', textAr: 'سلمت سارة السيارة لسامي بابتسامة كبيرة. تبادلا الأدوار مراراً وتكراراً واستمتعا بضعف المرح معاً!', emoji: '✨' },
+        ]
+      },
+      {
+        id: 'feeling-mad',
+        title: 'Cooling Down Big Anger',
+        titleAr: 'بدر وعاصفة الغضب الكبيرة',
+        subtitle: 'Discovering how to cool down big feelings safely and calmly.',
+        subtitleAr: 'قصة مشوقة عن كيفية التعامل مع المشاعر الكبيرة والتهدئة بذكاء.',
+        icon: '😤',
+        tags: ['Feelings', '5 pages'],
+        tagsAr: ['المشاعر', '5 صفحات'],
+        steps: [
+          { step: 1, text: 'Bader\'s tall block tower accidentally tumbled down! Suddenly, Bader felt a big storm of anger inside his chest and his face felt warm.', textAr: 'انهار برج المكعبات العالي الذي بناه بدر فجأة! فجأة، شعر بدر بعاصفة كبيرة من الغضب في صدره وأصبح وجهه دافئاً.', emoji: '🧱' },
+          { step: 2, text: 'Instead of shouting, Bader remembered his cooling secret: Stop, Freeze, and Take Slow Deep Breaths.', textAr: 'بدلاً من الصراخ، تذكر بدر سر التهدئة الخاص به: توقف، تجمّد، وخذ أنفاساً عميقة وبطيئة.', emoji: '🛑' },
+          { step: 3, text: 'Bader closed his eyes, inhaled slowly through his nose filling his belly like a balloon, and exhaled softly three times.', textAr: 'أغمض بدر عينيه، وتنفس ببطء من أنفه ليمتلئ بطنه كبالون، ثم أخرج الزفير بهدوء من فمه ثلاث مرات.', emoji: '🌬️' },
+          { step: 4, text: 'His heart rate slowed down and his mind felt calm. Bader walked to his teacher and said politely: "My tower broke, can you help me rebuild it?"', textAr: 'هدأت ضربات قلبه وأصبح عقله صافياً. ذهب بدر لمعلمته وقال بهدوء: "لقد انهار برجي، هل يمكنك مساعدتي في إعادت بنائه؟"', emoji: '🤝' },
+          { step: 5, text: 'Teacher helped Bader build an even taller castle! Bader was proud that he stayed calm and handled his anger like a true hero.', textAr: 'ساعدت المعلمة بدر في بناء قلعة أكثر ارتفاعاً! كان بدر فخوراً بأنه حافظ على هدوئه وتصرف مع غضبه كبطل حقيقي.', emoji: '👑' },
+        ]
+      },
+      {
+        id: 'morning-routine',
+        title: 'Layan\'s Bright Morning Routine',
+        titleAr: 'يوم ليان الصباحي المشرق',
+        subtitle: 'How completing morning steps leads to a peaceful and successful day.',
+        subtitleAr: 'قصة يومية ممتعة تظهر كيف يمنحنا الروتين الصباحي الطاقة والنجاح.',
+        icon: '🌅',
+        tags: ['Routines', '5 pages'],
+        tagsAr: ['الروتين', '5 صفحات'],
+        steps: [
+          { step: 1, text: 'The morning sun shined softly through the window. Layan woke up, gave a big stretch with her arms up high, and smiled at the new day.', textAr: 'أشرقت شمس الصباح الدافئة عبر النافذة. استيقظت ليان، وتمددت بفرود ذراعيها عالياً، وابتسمت لليوم الجديد.', emoji: '☀️' },
+          { step: 2, text: 'Layan went to the bathroom to wash her hands and face with gentle soap, then brushed her teeth until they sparkled clean.', textAr: 'ذهبت ليان للحمام لتغسل وجهها ويديها بالصابون اللطيف، ثم نظفت أسنانها بالفرشاة حتى أصبحت تلمع ونظيفة.', emoji: '🪥' },
+          { step: 3, text: 'She picked out her comfortable school uniform, put on her socks and sneakers, and combed her hair neatly.', textAr: 'اختارت ملابسها المدرسية المريحة، ارتدت جواربها وحذاءها، ومشطت شعرها بكل ترتيب وفخر.', emoji: '👟' },
+          { step: 4, text: 'At the kitchen table, Layan enjoyed a warm, delicious breakfast with eggs and fresh fruit, filling her belly with energy.', textAr: 'على طاولة المطبخ، استمتعت ليان بوجبة فطور صحية ودافئة مع البيض والفواكه الطازجة، ليمتلئ بطنها بالطاقة النشيطة.', emoji: '🥞' },
+          { step: 5, text: 'Layan grabbed her backpack and gave Mom a big hug. She was fully ready, organized, and excited for a brilliant day at school!', textAr: 'أمسكت ليان بحقيبتها وعانقت والدتها عناقاً دافئاً. كانت جاهزة تماماً، منظمة، ومتحمسة ليوم حافل باللعب والتعلم!', emoji: '🚀' },
+        ]
+      }
+    ];
+
+    // Storybook Reader Screen
+    if (selectedStory) {
+      const currentStep = selectedStory.steps[storyStepIndex];
+      const storyText = lang === 'ar' ? currentStep.textAr : currentStep.text;
+
+      return (
+        <div className="space-y-6 max-w-xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
+          {/* Top Navigation & Story Header */}
+          <div className="bg-white p-5 rounded-3xl border border-[#ECE8FD] shadow-xs flex items-center justify-between">
+            <button
+              onClick={() => { setSelectedStory(null); setStoryStepIndex(0); }}
+              className="p-2.5 bg-slate-100 text-slate-600 rounded-2xl hover:bg-slate-200 transition-colors flex items-center gap-1 text-xs font-black"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{lang === 'ar' ? 'الرجوع للقصص' : 'Back to Stories'}</span>
+            </button>
+            <div className="text-center">
+              <h2 className="text-base font-black text-[#2A2B47]">{lang === 'ar' ? selectedStory.titleAr : selectedStory.title}</h2>
+              <span className="text-xs font-extrabold text-[#633BE8] bg-[#ECE8FD] px-3 py-0.5 rounded-full inline-block mt-0.5">
+                {lang === 'ar' ? `الصفحة ${storyStepIndex + 1} من ${selectedStory.steps.length}` : `Page ${storyStepIndex + 1} of ${selectedStory.steps.length}`}
+              </span>
+            </div>
+            
+            {/* Narration Voice Button */}
+            <button
+              onClick={() => {
+                speakVoice(storyText, lang);
+              }}
+              className="p-2.5 bg-[#ECE8FD] text-[#633BE8] hover:bg-[#633BE8] hover:text-white rounded-2xl transition-colors shadow-xs"
+              title={lang === 'ar' ? 'قراءة القصة بصوت عالي' : 'Read Aloud'}
+            >
+              <Volume2 className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Story Book Card Frame */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#ECE8FD] shadow-md text-center space-y-6 relative overflow-hidden">
+            {/* Story Scene Illustration Badge */}
+            <div className="w-32 h-32 mx-auto bg-gradient-to-tr from-purple-100 via-indigo-50 to-pink-100 border-4 border-purple-200 rounded-3xl flex items-center justify-center text-6xl shadow-inner transform hover:scale-105 transition-transform">
+              {currentStep.emoji}
+            </div>
+
+            {/* Narrative Story Paragraph */}
+            <div className="bg-[#FAFAFD] p-5 rounded-2xl border border-[#ECE8FD]">
+              <p className="text-base sm:text-lg font-extrabold text-[#2A2B47] leading-relaxed text-center sm:text-justify">
+                {storyText}
+              </p>
+            </div>
+
+            {/* Book Page Navigation Buttons */}
+            <div className="flex gap-3 pt-2">
+              <button
+                disabled={storyStepIndex === 0}
+                onClick={() => {
+                  setStoryStepIndex(prev => Math.max(prev - 1, 0));
+                  playAudioFeedback('tap');
+                }}
+                className={`flex-1 py-3.5 rounded-2xl font-black text-xs transition-all ${
+                  storyStepIndex === 0
+                    ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                }`}
+              >
+                {lang === 'ar' ? '← الصفحة السابقة' : '← Previous Page'}
+              </button>
+
+              {storyStepIndex < selectedStory.steps.length - 1 ? (
                 <button
-                  key={m.id}
                   onClick={() => {
-                    setSelectedMood(m.id);
-                    setMoodSaved(false);
+                    setStoryStepIndex(prev => prev + 1);
                     playAudioFeedback('tap');
-                    speakVoice(lang === 'ar' ? m.titleAr : m.title, lang);
                   }}
-                  className={`p-4 rounded-2xl border-2 flex flex-col items-center gap-2 transition-all cursor-pointer ${
-                    isSelected
-                      ? 'border-[#633BE8] bg-[#ECE8FD] scale-105 shadow-md ring-4 ring-[#633BE8]/20'
-                      : 'border-slate-100 bg-[#FAFAFD] hover:border-[#9C7AF2] hover:scale-102'
+                  className="flex-1 py-3.5 rounded-2xl bg-[#633BE8] hover:bg-[#9C7AF2] text-white font-black text-xs shadow-md transition-all flex items-center justify-center gap-1"
+                >
+                  <span>{lang === 'ar' ? 'الصفحة التالية' : 'Next Page'} →</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setSelectedStory(null);
+                    setStoryStepIndex(0);
+                    playAudioFeedback('success');
+                    setShowToast(true);
+                    setTimeout(() => setShowToast(false), 3000);
+                  }}
+                  className="flex-1 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs shadow-md transition-all flex items-center justify-center gap-1"
+                >
+                  <span>🎉 {lang === 'ar' ? 'إنهاء القصة الممتعة!' : 'Finish Story! 🎉'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Storybooks Grid List
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
+        {/* Header */}
+        <div className="flex justify-between items-center bg-gradient-to-r from-[#9C7AF2] via-[#633BE8] to-[#FF6086] p-6 rounded-3xl text-white shadow-md">
+          <div>
+            <span className="text-[10px] font-black uppercase bg-white/20 backdrop-blur-xs px-3 py-1 rounded-full text-white inline-block mb-1">
+              📚 {lang === 'ar' ? 'القصص التفاعلية والحكايات' : 'Interactive Storybooks'}
+            </span>
+            <h2 className="text-2xl font-black flex items-center gap-2">
+              📖 {lang === 'ar' ? 'القصص الاجتماعية (Social Stories)' : 'Social Stories'}
+            </h2>
+            <p className="text-xs font-semibold text-white/90 mt-1">
+              {lang === 'ar' ? 'اختر قصة قراءة ممتعة للبدء بالحكاية والاستماع إليها!' : 'Tap a storybook to read and listen to the narrative!'}
+            </p>
+          </div>
+          <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-3xl shadow-xs">
+            📚
+          </div>
+        </div>
+
+        {/* Storybook Cards List */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {stories.map(s => (
+            <div
+              key={s.id}
+              onClick={() => {
+                setSelectedStory(s);
+                setStoryStepIndex(0);
+                playAudioFeedback('tap');
+              }}
+              className="bg-white rounded-3xl p-6 border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#633BE8] hover:scale-[1.02] transition-all flex flex-col justify-between space-y-4 group"
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-14 h-14 rounded-2xl bg-[#ECE8FD] border border-[#633BE8]/20 flex items-center justify-center text-3xl shrink-0 group-hover:scale-105 transition-transform">
+                  {s.icon}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {(lang === 'ar' ? s.tagsAr : s.tags).map((tag, i) => (
+                    <span key={i} className="text-[10px] font-black bg-[#FAFAFD] text-[#633BE8] border border-[#ECE8FD] px-2.5 py-1 rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-black text-[#2A2B47]">{lang === 'ar' ? s.titleAr : s.title}</h3>
+                <p className="text-xs font-semibold text-[#73758C] mt-1 leading-relaxed">
+                  {lang === 'ar' ? s.subtitleAr : s.subtitle}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-[#ECE8FD] text-xs font-black text-[#633BE8]">
+                <span>{lang === 'ar' ? 'بدء قراءة القصة 📖' : 'Read Storybook 📖'}</span>
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // ==========================================
+  // 3. 💖 "How I Feel" Multi-Step Mood Flow
+  // ==========================================
+  const renderMoodCheckIn = () => {
+    const moodCards = [
+      { id: 'happy', name: 'Happy', nameAr: 'سعيد', emoji: '😃', border: 'border-amber-300 bg-amber-50/80 text-amber-900', feedback: "That's wonderful! Happy feelings are the best! 🌟" },
+      { id: 'good', name: 'Good', nameAr: 'جيد', emoji: '🙂', border: 'border-teal-300 bg-teal-50/80 text-teal-900', feedback: "Awesome! Having a good day feels great! 👍" },
+      { id: 'okay', name: 'Okay', nameAr: 'عادي', emoji: '😐', border: 'border-blue-300 bg-blue-50/80 text-blue-900', feedback: "That is completely fine. Take your time today! 💙" },
+      { id: 'sad', name: 'Sad', nameAr: 'حزين', emoji: '😔', border: 'border-purple-300 bg-purple-50/80 text-purple-900', feedback: "It's okay to feel sad. Sending you warm hugs! 💜" },
+      { id: 'frustrated', name: 'Frustrated', nameAr: 'إحباط', emoji: '😤', border: 'border-orange-300 bg-orange-50/80 text-orange-900', feedback: "Take 3 slow deep breaths. You've got this! 🌬️" },
+      { id: 'worried', name: 'Worried', nameAr: 'قلق', emoji: '😟', border: 'border-sky-300 bg-sky-50/80 text-sky-900', feedback: "Remember you are safe and loved. Talk to someone you trust! ☁️" },
+      { id: 'tired', name: 'Tired', nameAr: 'متعب', emoji: '😴', border: 'border-amber-200 bg-yellow-50/80 text-amber-900', feedback: "Get some rest and take a cozy break! 💤" },
+      { id: 'excited', name: 'Excited', nameAr: 'حماسي', emoji: '🤩', border: 'border-pink-300 bg-pink-50/80 text-pink-900', feedback: "Wohoo! Harness that amazing excitement today! 🎉" },
+    ];
+
+    const intensityLevels = [
+      { id: 'little', label: 'A little', labelAr: 'قليلاً', scale: 'scale-95' },
+      { id: 'somewhat', label: 'Somewhat', labelAr: 'نوعاً ما', scale: 'scale-100' },
+      { id: 'very', label: 'Very much', labelAr: 'كثيراً', scale: 'scale-110' },
+      { id: 'super', label: 'Super!', labelAr: 'جداً!', scale: 'scale-125' },
+    ];
+
+    const reasonOptions = [
+      { id: 'r1', text: 'Something made me laugh today', textAr: 'شيء ما أضحكني اليوم' },
+      { id: 'r2', text: 'I played with a friend', textAr: 'لعبت مع صديق' },
+      { id: 'r3', text: 'I got something I wanted', textAr: 'حصلت على شيء تمنيته' },
+      { id: 'r4', text: 'I felt tired or sick', textAr: 'شعرت بالتعب أو المرض' },
+      { id: 'r5', text: 'I had a busy day', textAr: 'كان يوماً حافلاً' },
+    ];
+
+    // Step 1: Select Mood Card
+    if (moodStep === 1) {
+      return (
+        <div className="space-y-6 max-w-2xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
+          <div className="bg-white p-6 rounded-3xl border border-[#ECE8FD] shadow-xs text-center">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#2A2B47]">
+              {lang === 'ar' ? 'كيف تشعر الآن؟' : 'How are you feeling?'} 💖
+            </h2>
+            <p className="text-xs sm:text-sm font-semibold text-[#73758C] mt-1">
+              {lang === 'ar' ? 'اضغط على الوجه الذي يطابق شعورك في هذه اللحظة' : 'Tap the face that matches your mood right now'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {moodCards.map(m => (
+              <button
+                key={m.id}
+                onClick={() => {
+                  setSelectedMoodObj(m);
+                  setMoodStep(2);
+                  playAudioFeedback('tap');
+                }}
+                className={`p-5 rounded-3xl border-2 flex items-center gap-4 transition-all cursor-pointer hover:scale-105 shadow-xs ${m.border}`}
+              >
+                <span className="text-4xl sm:text-5xl">{m.emoji}</span>
+                <span className="font-black text-base sm:text-lg">{lang === 'ar' ? m.nameAr : m.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Step 2: Intensity Selection
+    if (moodStep === 2 && selectedMoodObj) {
+      return (
+        <div className="space-y-6 max-w-xl mx-auto pt-4 pb-28 font-sans animate-fade-in text-center">
+          <div className="bg-white p-8 rounded-3xl border border-[#ECE8FD] shadow-sm space-y-6">
+            <div className="w-24 h-24 mx-auto rounded-3xl bg-purple-100 flex items-center justify-center text-6xl shadow-inner">
+              {selectedMoodObj.emoji}
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-[#2A2B47]">
+                {lang === 'ar' ? `أنت تشعر بـ (${selectedMoodObj.nameAr})` : `You're feeling ${selectedMoodObj.name}`}
+              </h2>
+              <p className="text-xs font-bold text-[#73758C] mt-1">
+                {lang === 'ar' ? `ما مدى شدة هذا الشعور لديك؟` : `How ${selectedMoodObj.name.toLowerCase()} do you feel?`}
+              </p>
+            </div>
+
+            {/* 4 Intensity Options */}
+            <div className="grid grid-cols-2 gap-3">
+              {intensityLevels.map(lvl => (
+                <button
+                  key={lvl.id}
+                  onClick={() => setMoodIntensity(lvl.label)}
+                  className={`p-4 rounded-2xl border-2 font-black text-sm transition-all flex flex-col items-center justify-center gap-2 ${
+                    moodIntensity === lvl.label
+                      ? 'border-[#633BE8] bg-[#633BE8] text-white shadow-md scale-105'
+                      : 'border-slate-100 bg-[#FAFAFD] text-slate-700 hover:border-purple-300'
                   }`}
                 >
-                  <span className="text-4xl animate-bounce-short">{m.emoji}</span>
-                  <span className="font-extrabold text-xs text-[#2A2B47]">
-                    {lang === 'ar' ? m.titleAr : m.title}
-                  </span>
+                  <span className={`text-2xl ${lvl.scale}`}>{selectedMoodObj.emoji}</span>
+                  <span>{lang === 'ar' ? lvl.labelAr : lvl.label}</span>
                 </button>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => setMoodStep(3)}
+              className="w-full py-4 rounded-2xl bg-[#633BE8] hover:bg-[#9C7AF2] text-white font-black text-sm shadow-md transition-all"
+            >
+              {lang === 'ar' ? 'التالي' : 'Next'} →
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Step 3: Reason Selection
+    if (moodStep === 3 && selectedMoodObj) {
+      return (
+        <div className="space-y-6 max-w-xl mx-auto pt-4 pb-28 font-sans animate-fade-in">
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#ECE8FD] shadow-sm space-y-5">
+            <div className="flex items-center gap-4 border-b border-[#ECE8FD] pb-4">
+              <span className="text-4xl">{selectedMoodObj.emoji}</span>
+              <div>
+                <h2 className="text-xl font-black text-[#2A2B47]">
+                  {lang === 'ar' ? 'ما الذي جعلك تشعر بهذا الشعور؟' : 'What made you feel that way?'}
+                </h2>
+                <p className="text-xs font-semibold text-[#73758C] mt-0.5">
+                  {lang === 'ar' ? 'اختر سبباً أو تخطّ الخطوة — الخيار لك!' : 'Pick one or skip — it\'s up to you!'}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Reason Pills */}
+            <div className="space-y-2">
+              {reasonOptions.map(r => (
+                <button
+                  key={r.id}
+                  onClick={() => setSelectedMoodReason(r.text)}
+                  className={`w-full p-3.5 rounded-2xl text-xs font-extrabold text-left rtl:text-right border-2 transition-all ${
+                    selectedMoodReason === r.text
+                      ? 'border-[#633BE8] bg-[#ECE8FD] text-[#633BE8]'
+                      : 'border-slate-100 bg-[#FAFAFD] text-slate-700 hover:border-purple-200'
+                  }`}
+                >
+                  💡 {lang === 'ar' ? r.textAr : r.text}
+                </button>
+              ))}
+            </div>
+
+            {/* Optional Custom Input */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-600">
+                {lang === 'ar' ? 'أو اكتب سببك الخاص (اختياري):' : 'Or type a custom reason (optional):'}
+              </label>
+              <input
+                type="text"
+                value={customMoodReasonText}
+                onChange={e => setCustomMoodReasonText(e.target.value)}
+                placeholder={lang === 'ar' ? 'اكتب هنا...' : 'Type reason here...'}
+                className="w-full p-3.5 rounded-2xl border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#633BE8]"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setMoodStep(4)}
+                className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-extrabold text-xs hover:bg-slate-200"
+              >
+                {lang === 'ar' ? 'تخطي' : 'Skip'}
+              </button>
+              <button
+                onClick={() => {
+                  setMoodStep(4);
+                  playAudioFeedback('success');
+                }}
+                className="flex-1 py-3.5 rounded-2xl bg-[#633BE8] hover:bg-[#9C7AF2] text-white font-black text-xs shadow-md transition-all"
+              >
+                {lang === 'ar' ? 'إرسال الشعور' : 'Submit Check-in'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Step 4: Success / Feedback Screen
+    return (
+      <div className="space-y-6 max-w-md mx-auto pt-8 pb-28 font-sans animate-fade-in text-center">
+        <div className="bg-white p-8 rounded-3xl border border-[#ECE8FD] shadow-xl space-y-6">
+          <div className="w-24 h-24 mx-auto rounded-3xl bg-amber-100 flex items-center justify-center text-6xl shadow-inner animate-bounce-short">
+            {selectedMoodObj?.emoji || '🌟'}
           </div>
 
-          {/* Add a Comment Section */}
-          <div className="pt-4 border-t border-[#ECE8FD] space-y-2">
-            <label className="block text-xs font-black text-[#2A2B47]">
-              💬 {lang === 'ar' ? 'إضافة تعليق (اختياري)' : 'Add a Comment (Optional)'}
-            </label>
-            <textarea
-              value={moodComment}
-              onChange={(e) => setMoodComment(e.target.value)}
-              placeholder={
-                lang === 'ar'
-                  ? 'أخبرنا المزيد عن شعورك ولماذا تشعر بهذا الشعور...'
-                  : 'Tell us more about how you feel...'
-              }
-              className="w-full p-4 border border-[#ECE8FD] rounded-2xl bg-[#FAFAFD] text-[#2A2B47] text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#633BE8] min-h-[90px]"
-            />
+          <div>
+            <h2 className="text-2xl font-black text-[#2A2B47]">
+              {lang === 'ar' ? 'شكراً لمشاركتك معنا!' : 'Thank you for sharing!'}
+            </h2>
+            <p className="text-xs font-semibold text-[#73758C] mt-2 leading-relaxed">
+              {selectedMoodObj?.feedback || (lang === 'ar' ? 'أنت تقوم بعمل رائع اليوم!' : 'You are doing amazing today!')}
+            </p>
           </div>
 
-          {/* Save Button */}
+          <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl text-amber-900 font-extrabold text-xs shadow-2xs">
+            ⭐ {lang === 'ar' ? 'تم تسجيل حضورك اليوم! استمر في تتبع مشاعرك يومياً' : 'You checked in today! ⭐ Keep tracking your feelings every day'}
+          </div>
+
           <button
-            onClick={handleSaveMood}
-            disabled={!selectedMood}
-            className={`w-full py-3.5 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
-              selectedMood
-                ? 'bg-[#633BE8] text-white hover:bg-[#9C7AF2] cursor-pointer'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-            }`}
+            onClick={() => {
+              setMoodStep(1);
+              setSelectedMoodObj(null);
+              setCurrentView('dashboard');
+            }}
+            className="w-full py-4 rounded-2xl bg-[#633BE8] hover:bg-[#9C7AF2] text-white font-black text-sm shadow-md transition-all"
           >
-            {moodSaved ? (
-              <>
-                <CheckCircle className="w-4 h-4 text-emerald-300" />
-                <span>{lang === 'ar' ? 'تم تسجيل شعورك بنجاح! ⭐' : 'Mood Recorded Successfully! ⭐'}</span>
-              </>
-            ) : (
-              <>
-                <Star className="w-4 h-4 text-amber-300 fill-current" />
-                <span>{lang === 'ar' ? 'حفظ وإرسال الشعور' : 'Save My Feeling'}</span>
-              </>
-            )}
+            {lang === 'ar' ? 'العودة للرئيسية 🏠' : 'Back to Home'}
           </button>
         </div>
       </div>
@@ -1399,50 +1959,82 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
           </div>
         </div>
 
-        {/* Secondary Games Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <div 
-            onClick={() => {
-              setPlayingGame(childData.games.find(g => g.category === 'sel'));
-              setCurrentView('games');
-            }}
-            className="bg-white rounded-3xl p-5 border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#FF6086] transition-all"
-          >
-            <div className="text-3xl mb-2">🧘</div>
-            <span className="text-[10px] font-black text-[#FF6086] uppercase">Breathing</span>
-            <h4 className="font-black text-[#2A2B47] text-base">Calm Corner</h4>
-          </div>
 
-          <div 
-            onClick={() => {
-              setPlayingGame(childData.games.find(g => g.category === 'cognitive'));
-              setCurrentView('games');
-            }}
-            className="bg-white rounded-3xl p-5 border border-[#ECE8FD] shadow-xs cursor-pointer hover:border-[#FFA660] transition-all"
-          >
-            <div className="text-3xl mb-2">📖</div>
-            <span className="text-[10px] font-black text-[#FFA660] uppercase">Read & Learn</span>
-            <h4 className="font-black text-[#2A2B47] text-base">Stories</h4>
-          </div>
-        </div>
       </div>
 
-      {/* 5. Feel-Good Corner */}
-      <div 
-        onClick={() => {
-          playAudioFeedback('click');
-          setCurrentView('feel-good');
-        }}
-        className="bg-gradient-to-r from-[#FF6086] to-[#9C7AF2] rounded-3xl p-6 text-white cursor-pointer hover:scale-[1.01] transition-all shadow-xs flex items-center justify-between"
-      >
-        <div>
-          <h4 className="text-xl font-black mb-1">{lang === 'en' ? 'Feel-Good Corner' : 'ركن الشعور الجميل'} 💖</h4>
-          <p className="text-xs text-white/90 font-medium">
-            {lang === 'en' ? 'Breathing, Stories & Mood Tracker' : 'التنفس، القصص، ومتتبع المشاعر'}
-          </p>
-        </div>
-        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl backdrop-blur-xs border border-white/30">
-          ✨
+      {/* 5. Feel-Good Corner (3 Rounded Cards: Calm Corner, Stories, How I Feel) */}
+      <div className="space-y-3">
+        <h4 className="text-base font-black text-[#2A2B47] flex items-center gap-2">
+          💖 {lang === 'en' ? 'Feel-Good Corner' : 'ركن الشعور الجميل'}
+        </h4>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* 1. Calm Corner (Blue Accent) */}
+          <div
+            onClick={() => {
+              playAudioFeedback('click');
+              setCurrentView('calm-corner');
+            }}
+            className="bg-sky-50 border-2 border-sky-200 hover:border-sky-400 p-5 rounded-3xl cursor-pointer hover:scale-[1.02] transition-all shadow-xs flex flex-col justify-between space-y-3 group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                <Wind className="w-6 h-6" />
+              </div>
+              <span className="text-[10px] font-black uppercase text-sky-700 bg-sky-100 px-2.5 py-0.5 rounded-full">
+                Breathing
+              </span>
+            </div>
+            <div>
+              <h5 className="font-black text-slate-800 text-base">{lang === 'ar' ? 'ركن الهدوء' : 'Calm Corner'}</h5>
+              <p className="text-xs text-slate-500 font-semibold mt-0.5">{lang === 'ar' ? 'تمارين التنفس' : 'Breathing'}</p>
+            </div>
+          </div>
+
+          {/* 2. Stories (Purple Accent) */}
+          <div
+            onClick={() => {
+              playAudioFeedback('click');
+              setCurrentView('stories');
+            }}
+            className="bg-purple-50 border-2 border-purple-200 hover:border-purple-400 p-5 rounded-3xl cursor-pointer hover:scale-[1.02] transition-all shadow-xs flex flex-col justify-between space-y-3 group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-[#633BE8] text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                <BookOpen className="w-6 h-6" />
+              </div>
+              <span className="text-[10px] font-black uppercase text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full">
+                Read & Learn
+              </span>
+            </div>
+            <div>
+              <h5 className="font-black text-slate-800 text-base">{lang === 'ar' ? 'القصص' : 'Stories'}</h5>
+              <p className="text-xs text-slate-500 font-semibold mt-0.5">{lang === 'ar' ? 'اقرأ وتعلم' : 'Read & learn'}</p>
+            </div>
+          </div>
+
+          {/* 3. How I Feel (Orange Accent) */}
+          <div
+            onClick={() => {
+              playAudioFeedback('click');
+              setMoodStep(1);
+              setCurrentView('mood-checkin');
+            }}
+            className="bg-orange-50 border-2 border-orange-200 hover:border-orange-400 p-5 rounded-3xl cursor-pointer hover:scale-[1.02] transition-all shadow-xs flex flex-col justify-between space-y-3 group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                <SmilePlus className="w-6 h-6" />
+              </div>
+              <span className="text-[10px] font-black uppercase text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                Check in
+              </span>
+            </div>
+            <div>
+              <h5 className="font-black text-slate-800 text-base">{lang === 'ar' ? 'كيف أشعر' : 'How I Feel'}</h5>
+              <p className="text-xs text-slate-500 font-semibold mt-0.5">{lang === 'ar' ? 'تسجيل المشاعر' : 'Check in'}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1457,12 +2049,15 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
         </div>
       </div>
 
-      {/* 7. Overall Progress Spotlight Banner (Moved to Very Bottom of Dashboard) */}
-      <div 
-        onClick={() => setCurrentView('progress')}
-        className="bg-gradient-to-r from-[#633BE8] via-[#9C7AF2] to-[#FF6086] rounded-3xl p-6 text-white shadow-xs relative overflow-hidden cursor-pointer hover:scale-[1.01] transition-all group"
-      >
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* 7. Expandable/Collapsible Overall Progress Accordion Section at Very Bottom of Dashboard */}
+      <div className="bg-white rounded-3xl border border-[#ECE8FD] shadow-xs overflow-hidden transition-all">
+        <div
+          onClick={() => {
+            setIsDashboardProgressExpanded(!isDashboardProgressExpanded);
+            playAudioFeedback('tap');
+          }}
+          className="bg-gradient-to-r from-[#633BE8] via-[#9C7AF2] to-[#FF6086] p-6 text-white cursor-pointer flex items-center justify-between hover:opacity-95 transition-opacity"
+        >
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-3xl shrink-0">
               📈
@@ -1476,11 +2071,52 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
               </h3>
             </div>
           </div>
-          <div className="bg-white/20 hover:bg-white hover:text-[#633BE8] backdrop-blur-xs border border-white/30 px-4 py-2 rounded-2xl text-xs font-black transition-colors flex items-center gap-1 shrink-0">
-            <span>{lang === 'ar' ? 'عرض التطور' : 'View Progress'}</span>
-            <ChevronRight className="w-4 h-4" />
+          <div className="p-2.5 bg-white/20 hover:bg-white hover:text-[#633BE8] rounded-2xl text-white backdrop-blur-xs transition-colors shrink-0">
+            {isDashboardProgressExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </div>
         </div>
+
+        {/* Collapsible Accordion Content */}
+        {isDashboardProgressExpanded && (
+          <div className="p-6 bg-white space-y-6 animate-fade-in border-t border-[#ECE8FD]">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-sky-50 border border-sky-200 p-4 rounded-2xl text-center">
+                <div className="text-2xl font-black text-sky-800">12</div>
+                <div className="text-[11px] font-bold text-sky-600">Missions Done</div>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-center">
+                <div className="text-2xl font-black text-amber-800">450</div>
+                <div className="text-[11px] font-bold text-amber-600">Total XP</div>
+              </div>
+              <div className="bg-purple-50 border border-purple-200 p-4 rounded-2xl text-center">
+                <div className="text-2xl font-black text-purple-800">5</div>
+                <div className="text-[11px] font-bold text-purple-600">Fav Games</div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <h4 className="font-black text-[#2A2B47] text-sm flex items-center gap-2">
+                📈 {lang === 'ar' ? 'تطور النمو المهاراتي التفصيلي' : 'Detailed Skill Growth Breakdown'}
+              </h4>
+              {[
+                { name: 'Speech & Language', value: 85, color: 'bg-sky-500', icon: '🗣️' },
+                { name: 'Motor Skills', value: 65, color: 'bg-emerald-500', icon: '🏃‍♂️' },
+                { name: 'Focus & Attention', value: 90, color: 'bg-purple-500', icon: '🧠' },
+                { name: 'Social Skills', value: 70, color: 'bg-amber-500', icon: '🤝' },
+              ].map((skill, i) => (
+                <div key={i} className="space-y-1.5">
+                  <div className="flex justify-between items-center text-xs font-bold text-[#2A2B47]">
+                    <span>{skill.icon} {skill.name}</span>
+                    <span className="font-black text-[#633BE8]">{skill.value}%</span>
+                  </div>
+                  <div className="w-full bg-[#ECE8FD] h-3 rounded-full overflow-hidden">
+                    <div className={`h-full ${skill.color} rounded-full transition-all duration-500`} style={{ width: `${skill.value}%` }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1976,7 +2612,10 @@ const renderProgress = () => (
         {currentView === 'profile' && renderProfile()}
         {currentView === 'challenges' && renderChallenges()}
         {currentView === 'homeplan' && renderHomePlan()}
-        {currentView === 'feel-good' && renderFeelGoodCorner()}
+        {currentView === 'feel-good' && renderCalmCorner()}
+        {currentView === 'calm-corner' && renderCalmCorner()}
+        {currentView === 'stories' && renderStories()}
+        {currentView === 'mood-checkin' && renderMoodCheckIn()}
         {currentView === 'achieved' && renderAchieved()}
       
       {showWinModal && (
@@ -2082,7 +2721,7 @@ const renderProgress = () => (
             { id: 'games', icon: <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#633BE8]" />, label: lang === 'en' ? 'Games' : 'الألعاب' },
             { id: 'goals', icon: <ListTodo className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Tasks' : 'المهام' },
             { id: 'schedule', icon: <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />, label: lang === 'en' ? 'Calendar' : 'التقويم' },
-            { id: 'progress', icon: <Target className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />, label: lang === 'en' ? 'Progress' : 'التقدم' },
+            { id: 'tokenboard', icon: <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-400" />, label: lang === 'en' ? 'Token' : 'الرموز' },
             { id: 'profile', icon: <User className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Profile' : 'الملف' },
           ].map((item) => {
             const isActive = currentView === item.id;

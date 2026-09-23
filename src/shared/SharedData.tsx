@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 export interface ParentProfile {
   id: string;
   fullName: string;
-  birthDate: string;
+  birthDate?: string;
   email: string;
   phone: string;
   profilePhoto?: string;
@@ -92,9 +92,12 @@ export interface CalendarEvent {
   date: string;
   endDate?: string;
   time: string;
+  startTime?: string;
+  endTime?: string;
   title: string;
   content: string;
   specialistName?: string;
+  location?: string;
 }
 
 interface SharedDataContextType {

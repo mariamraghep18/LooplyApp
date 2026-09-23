@@ -7,3 +7,4 @@ coverage/
 .env*
 !.env.example
 flutter_app/flutter/ 
+.vercel

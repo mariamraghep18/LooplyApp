@@ -7,7 +7,7 @@ import { Plan, TokenBoards } from './components/ChildCare';
 import { Report } from './components/Analytics';
 import { VideoRecords, FindMyChild } from './components/MediaAndLocation';
 import { CommunityMessages } from './components/Communication';
-import { Calendar, Marketplace, Billing, Support } from './components/Misc';
+import { Calendar, Marketplace, Billing, Support, MobileDashboardMockup } from './components/Misc';
 import { ParentProfile } from './components/ParentProfile';
 import ChildPortal from './ChildPortal/ChildPortal';
 import { LanguageProvider } from './shared/LanguageContext';
@@ -16,8 +16,9 @@ import WelcomeScreen from './portals/Selection/WelcomeScreen';
 import PortalSelection from './portals/Selection/PortalSelection';
 import FamilySelection from './portals/Selection/FamilySelection';
 import ChildWelcome from './portals/Child/ChildWelcome';
+import { LooplyPro } from './components/LooplyPro/LooplyPro';
 
-import { Chatbot } from './components/Chatbot';
+import { AccessibilityWidget } from './components/AccessibilityWidget';
 
 export default function App() {
   // Very first page that appears when launching the app is 'welcome'
@@ -42,6 +43,8 @@ export default function App() {
         return <FamilySelection onNavigate={(v: any) => setCurrentView(v)} />;
       case 'child-welcome':
         return <ChildWelcome onNavigate={(v: any) => setCurrentView(v)} />;
+      case 'looply-pro':
+        return <LooplyPro onBackToPortalSelection={() => setCurrentView('portal-selection')} />;
       case 'login':
         return <Login onLogin={handleLogin} onNavigate={(v: any) => setCurrentView(v)} />;
       case 'register':
@@ -68,7 +71,7 @@ export default function App() {
       case 'marketplace': return <Marketplace />;
       case 'billing': return <Billing />;
       case 'support': return <Support />;
-      case 'settings': return <ParentProfile onBack={() => setCurrentView('dashboard')} />;
+      case 'settings': return <ParentProfile onBack={() => setCurrentView('dashboard')} onLogout={handleLogout} />;
       default: return <Dashboard onNavigate={setCurrentView} />;
     }
   };
@@ -83,9 +86,9 @@ export default function App() {
             onLogout={handleLogout}
           >
             {renderView()}
-            <Chatbot />
           </Layout>
         )}
+        <AccessibilityWidget />
       </LanguageProvider>
     </SharedDataProvider>
   );

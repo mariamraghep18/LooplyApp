@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSharedData } from '../shared/SharedData';
-import { User, ArrowLeft, Check, Lock, Briefcase, Home } from 'lucide-react';
+import { User, ArrowLeft, Check, Lock, Briefcase, Home, LogOut } from 'lucide-react';
 import { useLanguage } from '../shared/LanguageContext';
 
-export function ParentProfile({ onBack }: { onBack: () => void }) {
+export function ParentProfile({ onBack, onLogout }: { onBack: () => void; onLogout?: () => void }) {
   const { parentProfile, setParentProfile, children: _children, updateChild, activeChildId } = useSharedData() as any;
   const { lang } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
@@ -221,6 +221,29 @@ export function ParentProfile({ onBack }: { onBack: () => void }) {
                 className="px-8 py-3 rounded-2xl bg-[#633BE8] text-white font-black text-sm shadow-md hover:bg-[#9C7AF2] transition-colors"
               >
                 {lang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}
+              </button>
+            </div>
+          )}
+
+          {/* Account Actions Section - Log Out Button */}
+          {onLogout && (
+            <div className="pt-6 border-t border-[#ECE8FD] flex items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-black text-rose-600 flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  {lang === 'ar' ? 'تسجيل الخروج من الحساب' : 'Account Sign Out'}
+                </h3>
+                <p className="text-xs text-[#73758C] font-semibold mt-1">
+                  {lang === 'ar' ? 'تسجيل الخروج الآمن والعودة لشاشة الاختيار الرئيسية' : 'Safely log out of your parent account and return to welcome screen.'}
+                </p>
+              </div>
+
+              <button
+                onClick={onLogout}
+                className="px-6 py-3 rounded-2xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white font-black text-xs sm:text-sm border border-rose-200 shadow-md transition-all flex items-center gap-2 shrink-0 hover:scale-105"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>{lang === 'ar' ? 'تسجيل الخروج الآن' : 'Log Out Now'}</span>
               </button>
             </div>
           )}

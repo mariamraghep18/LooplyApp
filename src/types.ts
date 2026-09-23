@@ -19,7 +19,8 @@ export type ViewState =
   | 'support'
   | 'settings'
   | 'child-welcome'
-  | 'child-portal';
+  | 'child-portal'
+  | 'looply-pro';
 
 export interface User {
   id: string;

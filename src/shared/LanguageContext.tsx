@@ -23,10 +23,10 @@ const translations = {
     letsGo: 'Let\'s Go!',
     welcomeChampion: 'What\'s your name, champion?',
     enterName: 'Enter your name...',
-    
+
     // Parent Portal Fallbacks
     dashboard: 'Dashboard',
-    
+
     // Child Portal
     games: 'Games',
     goals: 'Goals',

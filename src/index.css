@@ -106,3 +106,86 @@ body {
 .bottom-safe {
   bottom: max(1.5rem, env(safe-area-inset-bottom));
 }
+
+/* Accessibility Widget Global Utilities */
+html.acc-hide-images img,
+html.acc-hide-images svg:not(.acc-widget-icon),
+html.acc-hide-images video,
+html.acc-hide-images picture,
+html.acc-hide-images canvas {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+html.acc-hide-images [style*="background-image"] {
+  background-image: none !important;
+}
+
+html.acc-stop-animations *,
+html.acc-stop-animations *::before,
+html.acc-stop-animations *::after {
+  animation: none !important;
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+html.acc-highlight-links a,
+html.acc-highlight-links button:not(.acc-widget-btn) {
+  outline: 3px solid #FFD066 !important;
+  outline-offset: 2px !important;
+  text-decoration: underline !important;
+  font-weight: 700 !important;
+}
+
+html.acc-big-cursor,
+html.acc-big-cursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="%23002D72" stroke="white" stroke-width="2"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>'), auto !important;
+}
+
+html.acc-dyslexic-font * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Trebuchet MS', sans-serif !important;
+}
+
+html.acc-font-lg {
+  font-size: 112% !important;
+}
+html.acc-font-xl {
+  font-size: 125% !important;
+}
+
+html.acc-line-height-lg p,
+html.acc-line-height-lg span,
+html.acc-line-height-lg div {
+  line-height: 2 !important;
+}
+
+html.acc-letter-spacing-lg p,
+html.acc-letter-spacing-lg span,
+html.acc-letter-spacing-lg h1,
+html.acc-letter-spacing-lg h2,
+html.acc-letter-spacing-lg h3 {
+  letter-spacing: 0.12em !important;
+}
+
+html.acc-contrast-dark body {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+html.acc-contrast-dark body * {
+  border-color: #334155 !important;
+}
+
+html.acc-contrast-light body {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+html.acc-highlight-titles h1,
+html.acc-highlight-titles h2,
+html.acc-highlight-titles h3,
+html.acc-highlight-titles h4 {
+  background-color: #fef08a !important;
+  color: #0f172a !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
