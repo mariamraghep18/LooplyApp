@@ -1,121 +1,43 @@
-export interface PatientRecord {
-  id: string;
-  firstName: string;
-  lastName: string;
-  dob: string;
-  age: number;
-  gender: 'Male' | 'Female' | 'Other';
-  status: 'Active' | 'Inactive' | 'Discharged';
-  primaryDiagnosis: string;
-  guardianName: string;
-  guardianPhone: string;
-  school: string;
-  grade: string;
-  avatar: string;
-  therapistAssigned: string;
-  lastSessionDate: string;
-  iepCompletionPct: number;
-}
+/**
+ * NovaData.ts — NovaCRM Data Layer
+ *
+ * This file is the Data layer of the NovaCRM XML System.
+ * All types/interfaces are imported from NovaSchema.ts (the Data Model),
+ * which is the single authoritative source of truth for data structure.
+ *
+ * Architecture:
+ *   NovaCRM XML System
+ *   ├── NovaSchema.ts  ← Data Model  (all interfaces — source of truth)
+ *   └── NovaData.ts    ← Data        (this file — seed data + re-exports)
+ *
+ * Types are re-exported from this file so all existing component imports
+ * (e.g. `import { PatientRecord } from './NovaData'`) continue to work
+ * without any changes.
+ */
 
-export interface Appointment {
-  id: string;
-  patientId: string;
-  patientName: string;
-  date: string;
-  time: string;
-  durationMins: number;
-  type: 'Individual' | 'Group' | 'Assessment' | 'Consultation';
-  location: string;
-  recurrence: 'None' | 'Weekly' | 'Bi-Weekly' | 'Monthly';
-  therapistName: string;
-  status: 'Confirmed' | 'Completed' | 'Cancelled' | 'In-Progress';
-}
+// ── Data Model import & re-export (preserves all existing consumer imports) ──
+export type {
+  PatientRecord,
+  Appointment,
+  GoalTemplate,
+  HomeExercise,
+  TreatmentObjective,
+  LongTermGoal,
+  TreatmentPlan,
+  TrialTapeEntry,
+  IntakeSubmission,
+  WaitlistEntry,
+  TeamMember,
+} from './NovaSchema';
 
-export interface GoalTemplate {
-  id: string;
-  domain: 'Speech' | 'Occupational' | 'Social-Emotional' | 'Academics' | 'Executive' | 'Physical' | 'Daily Living';
-  measurementType: 'Percentage' | 'Duration' | 'Frequency' | 'Latency';
-  title: string;
-  description: string;
-  targetCriteria: string;
-  exampleTrials: string;
-}
-
-export interface HomeExercise {
-  id: string;
-  title: string;
-  instructions: string;
-  frequency: string;
-  duration: string;
-}
-
-export interface TreatmentObjective {
-  id: string;
-  title: string;
-  targetDate: string;
-  status: 'Mastered' | 'In-Progress' | 'Not Started';
-}
-
-export interface LongTermGoal {
-  id: string;
-  title: string;
-  domain: string;
-  targetDate: string;
-  objectives: TreatmentObjective[];
-}
-
-export interface TreatmentPlan {
-  id: string;
-  patientId: string;
-  patientName: string;
-  therapistName: string;
-  serviceFrequency: string;
-  planPeriodStart: string;
-  planPeriodEnd: string;
-  goals: LongTermGoal[];
-}
-
-export interface TrialTapeEntry {
-  id: string;
-  timestamp: string;
-  result: 'Correct' | 'Incorrect' | 'Prompted' | 'No Response';
-}
-
-export interface IntakeSubmission {
-  id: string;
-  childName: string;
-  guardianName: string;
-  guardianEmail: string;
-  guardianPhone: string;
-  dob: string;
-  servicesRequested: string[];
-  presentingConcerns: string;
-  insuranceProvider: string;
-  policyNumber: string;
-  submissionDate: string;
-  status: 'Pending Review' | 'Accepted' | 'Waitlisted';
-}
-
-export interface WaitlistEntry {
-  id: string;
-  patientName: string;
-  age: number;
-  requestedService: string;
-  priority: 'High' | 'Medium' | 'Low';
-  addedDate: string;
-  contactNumber: string;
-}
-
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  specialty: string;
-  email: string;
-  phone: string;
-  activeCaseload: number;
-  avatar: string;
-}
+// ── Direct imports needed to type the seed-data arrays below ─────────────────
+import type {
+  PatientRecord,
+  Appointment,
+  GoalTemplate,
+  WaitlistEntry,
+  TeamMember,
+} from './NovaSchema';
 
 export const INITIAL_NOVA_PATIENTS: PatientRecord[] = [
   {

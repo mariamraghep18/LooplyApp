@@ -1,151 +1,47 @@
-export interface Patient {
-  id: string;
-  name: string;
-  nameAr: string;
-  age: number;
-  gender: 'M' | 'F';
-  avatar: string;
-  diagnoses: string[];
-  diagnosesAr: string[];
-  iepProgress: number;
-  primarySpecialist: string;
-  gradeOrGroup: string;
-  lastSession: string;
-  nextSession: string;
-  status: 'active' | 'inactive' | 'discharged';
-  dob?: string;
-  guardianName?: string;
-  guardianPhone?: string;
-  school?: string;
-  grade?: string;
-}
+/**
+ * ProData.ts — LooplyPro Data Layer
+ *
+ * This file is the Data layer of the LooplyPro XML System.
+ * All types/interfaces are imported from ProSchema.ts (the Data Model),
+ * which is the single authoritative source of truth for data structure.
+ *
+ * Architecture:
+ *   LooplyPro XML System
+ *   ├── ProSchema.ts  ← Data Model  (all interfaces — source of truth)
+ *   └── ProData.ts    ← Data        (this file — seed data + re-exports)
+ *
+ * Types are re-exported from this file so all existing component imports
+ * (e.g. `import { Patient } from './ProData'`) continue to work
+ * without any changes.
+ */
 
-export interface IepGoal {
-  id: string;
-  title: string;
-  titleAr: string;
-  domain: 'speech' | 'motor' | 'cognitive' | 'behavioral' | 'social-emotional' | 'academics' | 'executive' | 'physical' | 'daily-living';
-  domainLabelEn: string;
-  domainLabelAr: string;
-  description: string;
-  descriptionAr: string;
-  difficulty: 'beginner' | 'emerging' | 'intermediate' | 'advanced';
-  ageRange: string;
-  targetCriteria: string;
-  measurementType?: 'percentage' | 'duration' | 'frequency' | 'latency';
-  exampleTrials?: string;
-}
+// ── Data Model import & re-export (preserves all existing consumer imports) ──
+export type {
+  Patient,
+  IepGoal,
+  AppointedSession,
+  HomeSubmission,
+  StaffMember,
+  BillingInvoice,
+  SoapNote,
+  HomeExerciseItem,
+  TrialTapeEntry,
+  TreatmentObjective,
+  LongTermGoalItem,
+  WaitlistEntry,
+} from './ProSchema';
 
-export interface AppointedSession {
-  id: string;
-  patientId: string;
-  patientName: string;
-  therapistName: string;
-  serviceType: string;
-  serviceTypeAr: string;
-  date: string;
-  time: string;
-  durationMins: number;
-  room: string;
-  status: 'in-progress' | 'scheduled' | 'completed' | 'cancelled';
-  recurrence?: 'none' | 'weekly' | 'bi-weekly' | 'monthly';
-  type?: 'individual' | 'group' | 'assessment' | 'consultation';
-}
-
-export interface HomeSubmission {
-  id: string;
-  patientId: string;
-  patientName: string;
-  activityTitle: string;
-  activityTitleAr: string;
-  submittedBy: string;
-  date: string;
-  notes: string;
-  mediaType: 'video' | 'photo';
-  status: 'pending' | 'reviewed' | 'approved';
-  tokensEarned: number;
-}
-
-export interface StaffMember {
-  id: string;
-  name: string;
-  nameAr: string;
-  email: string;
-  avatar: string;
-  role: 'admin' | 'therapist' | 'assistant' | 'staff';
-  roleAr: string;
-  specialty: string;
-  specialtyAr: string;
-  caseload: number;
-  activeToday: boolean;
-  permissions?: string[];
-}
-
-export interface BillingInvoice {
-  id: string;
-  invoiceNumber: string;
-  patientName: string;
-  cptCode: string;
-  description: string;
-  amount: number;
-  date: string;
-  dueDate: string;
-  status: 'paid' | 'pending-claim' | 'draft';
-}
-
-export interface SoapNote {
-  id: string;
-  patientId: string;
-  patientName: string;
-  date: string;
-  therapistName: string;
-  subjective: string;
-  objective: string;
-  assessment: string;
-  plan: string;
-  cptCode: string;
-  durationMins: number;
-}
-
-export interface HomeExerciseItem {
-  id: string;
-  title: string;
-  instructions: string;
-  frequency: string;
-  duration: string;
-}
-
-export interface TrialTapeEntry {
-  id: string;
-  timestamp: string;
-  result: 'correct' | 'incorrect' | 'prompted' | 'no-response';
-}
-
-export interface TreatmentObjective {
-  id: string;
-  description: string;
-  targetDate: string;
-  criteria: string;
-  status: 'mastered' | 'in-progress' | 'not-started';
-}
-
-export interface LongTermGoalItem {
-  id: string;
-  title: string;
-  domain: string;
-  targetDate: string;
-  objectives: TreatmentObjective[];
-}
-
-export interface WaitlistEntry {
-  id: string;
-  patientName: string;
-  age: number;
-  requestedService: string;
-  priority: 'high' | 'medium' | 'low';
-  addedDate: string;
-  contactNumber: string;
-}
+// ── Direct imports needed to type the seed-data arrays below ─────────────────
+import type {
+  Patient,
+  IepGoal,
+  AppointedSession,
+  HomeSubmission,
+  StaffMember,
+  BillingInvoice,
+  SoapNote,
+  WaitlistEntry,
+} from './ProSchema';
 
 export const INITIAL_PATIENTS: Patient[] = [
   {

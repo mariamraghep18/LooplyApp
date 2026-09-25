@@ -242,29 +242,26 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
   }, [isRecording, isCameraMinimized]);
 
   useEffect(() => {
-    let interval: any;
-    if (isRecording) {
-      interval = setInterval(() => {
-        setRecordingTime(prev => {
-          if (prev <= 0) {
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-              mediaRecorderRef.current.stop();
-              setIsRecording(false);
-            }
-            if (!isSessionEnded) {
-               setIsSessionEnded(true);
-               setShowLockedModal(true);
-               setPlayingGame(null);
-               setCurrentView('dashboard');
-            }
-            return 0;
+    let interval: any = setInterval(() => {
+      setRecordingTime(prev => {
+        if (prev <= 1) {
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
           }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+          if (!isSessionEnded) {
+             setIsSessionEnded(true);
+             setShowLockedModal(true);
+             setPlayingGame(null);
+             setCurrentView('dashboard');
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     return () => clearInterval(interval);
-  }, [isRecording, isSessionEnded]);
+  }, [isSessionEnded]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -343,6 +340,30 @@ export default function ChildPortal({ onLogout }: ChildPortalProps) {
 
     return (
       <div className="space-y-6 max-w-3xl mx-auto pt-4 pb-28 font-sans">
+        {/* Top Header Bar for Game Session Status (20-Minute Timer + Live Recording Badge) */}
+        <div className="bg-[#1E1B4B] text-white p-4 rounded-3xl border-2 border-indigo-500/40 shadow-lg flex flex-wrap items-center justify-between gap-3 animate-fade-in">
+          {/* Live Camera Recording Badge */}
+          <div className="flex items-center gap-2.5 bg-red-950/80 border border-red-500/50 px-3.5 py-1.5 rounded-2xl">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>
+            <Camera className="w-4 h-4 text-red-400" />
+            <span className="text-red-300 font-extrabold text-xs tracking-wider uppercase">
+              {lang === 'ar' ? 'REC • الكاميرا نشطة' : 'REC • Camera Active'}
+            </span>
+          </div>
+
+          {/* 20-Minute Countdown Timer */}
+          <div className="flex items-center gap-2 bg-indigo-900/80 border border-indigo-400/40 px-4 py-1.5 rounded-2xl">
+            <span className="text-amber-400 font-black text-sm">⏱️</span>
+            <div className="text-white font-mono font-black text-sm sm:text-base">
+              <span className="text-slate-300 text-xs font-bold mr-1 rtl:ml-1">{lang === 'ar' ? 'الوقت المتبقي:' : 'Time Left:'}</span>
+              <span className="text-amber-300">{formatTime(recordingTime)}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Header with Yellow Star Mascot */}
         <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-[#ECE8FD] shadow-xs">
           <div>
@@ -2706,10 +2727,10 @@ const renderProgress = () => (
         <nav className="bg-white/95 backdrop-blur-md rounded-3xl px-2 sm:px-4 py-2.5 shadow-[0_10px_35px_rgba(99,59,232,0.15)] border border-[#ECE8FD] flex justify-between items-center overflow-x-auto no-scrollbar gap-1">
           {[
             { id: 'dashboard', icon: <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Dashboard' : 'الرئيسية' },
-            { id: 'games', icon: <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#633BE8]" />, label: lang === 'en' ? 'Games' : 'الألعاب' },
+            { id: 'games', icon: <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Games' : 'الألعاب' },
             { id: 'goals', icon: <ListTodo className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Tasks' : 'المهام' },
-            { id: 'schedule', icon: <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500" />, label: lang === 'en' ? 'Calendar' : 'التقويم' },
-            { id: 'tokenboard', icon: <Star className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 fill-amber-400" />, label: lang === 'en' ? 'Token' : 'الرموز' },
+            { id: 'schedule', icon: <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Calendar' : 'التقويم' },
+            { id: 'tokenboard', icon: <Star className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Token' : 'الرموز' },
             { id: 'profile', icon: <User className="w-4 h-4 sm:w-5 sm:h-5" />, label: lang === 'en' ? 'Profile' : 'الملف' },
           ].map((item) => {
             const isActive = currentView === item.id;
