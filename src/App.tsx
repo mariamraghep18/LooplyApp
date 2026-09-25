@@ -19,7 +19,6 @@ import ChildWelcome from './portals/Child/ChildWelcome';
 import { LooplyPro } from './components/LooplyPro/LooplyPro';
 
 import { Chatbot } from './components/Chatbot';
-import { AccessibilityWidget } from './components/AccessibilityWidget';
 
 export default function App() {
   // Very first page that appears when launching the app is 'welcome'
@@ -90,7 +89,6 @@ export default function App() {
             <Chatbot />
           </Layout>
         )}
-        <AccessibilityWidget />
       </LanguageProvider>
     </SharedDataProvider>
   );

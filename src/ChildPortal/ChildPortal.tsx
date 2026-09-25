@@ -2558,18 +2558,6 @@ const renderProgress = () => (
             </div>
           </button>
           
-          {/* Sound Mute Toggle Button */}
-          <button
-            onClick={() => {
-              const nextMute = toggleAudioMute();
-              setIsMuted(nextMute);
-            }}
-            className={`p-2.5 rounded-full font-bold transition-all shadow-md ${isMuted ? 'bg-rose-100 text-rose-600 border border-rose-200' : 'bg-sky-100 text-sky-700 border border-sky-200 hover:bg-sky-200'}`}
-            title={isMuted ? (lang === 'ar' ? 'تشغيل الصوت' : 'Unmute Sound') : (lang === 'ar' ? 'كتم الصوت' : 'Mute Sound')}
-          >
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-
           <button
             onClick={() => { playAudioFeedback('tap'); setCurrentView('rewards'); }}
             className="flex items-center justify-center p-2 rounded-full font-bold transition-all bg-orange-500 hover:bg-orange-400 shadow-lg shadow-orange-500/20 group"
