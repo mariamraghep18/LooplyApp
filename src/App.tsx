@@ -18,6 +18,7 @@ import FamilySelection from './portals/Selection/FamilySelection';
 import ChildWelcome from './portals/Child/ChildWelcome';
 import { LooplyPro } from './components/LooplyPro/LooplyPro';
 
+import { Chatbot } from './components/Chatbot';
 import { AccessibilityWidget } from './components/AccessibilityWidget';
 
 export default function App() {
@@ -86,6 +87,7 @@ export default function App() {
             onLogout={handleLogout}
           >
             {renderView()}
+            <Chatbot />
           </Layout>
         )}
         <AccessibilityWidget />

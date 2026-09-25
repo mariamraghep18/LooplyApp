@@ -121,7 +121,11 @@ export function AccessibilityWidget() {
 
   // Sync state changes with DOM & localStorage
   useEffect(() => {
-    const root = document.documentElement;
+    const targets = [
+      document.documentElement,
+      document.body,
+      document.getElementById('root')
+    ].filter(Boolean) as HTMLElement[];
 
     // 1. Calculate Combined CSS Filter string
     const filterParts: string[] = [];
@@ -131,12 +135,18 @@ export function AccessibilityWidget() {
 
     if (state.contrast === 'invert') filterParts.push('invert(100%) hue-rotate(180deg)');
 
-    root.style.filter = filterParts.join(' ');
+    const filterStr = filterParts.join(' ');
+
+    targets.forEach(el => {
+      el.style.filter = filterStr;
+    });
 
     // 2. Class manipulations for clean performance
     const toggleClass = (cls: string, cond: boolean) => {
-      if (cond) root.classList.add(cls);
-      else root.classList.remove(cls);
+      targets.forEach(el => {
+        if (cond) el.classList.add(cls);
+        else el.classList.remove(cls);
+      });
     };
 
     toggleClass('acc-hide-images', state.hideImages);
@@ -262,13 +272,14 @@ export function AccessibilityWidget() {
         aria-expanded={isOpen}
         style={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: state.position === 'bottom-left' ? '20px' : '90px',
           right: state.position === 'bottom-left' ? 'auto' : '20px',
           left: state.position === 'bottom-left' ? '20px' : 'auto',
-          zIndex: 9999,
+          zIndex: 99999,
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          filter: state.contrast === 'invert' ? 'invert(100%) hue-rotate(180deg)' : 'none',
         }}
-        className={`acc-widget-btn flex items-center justify-center rounded-full bg-[#002D72] text-white border-2 border-white focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95 transition-all duration-200 ${
+        className={`acc-widget-btn cursor-pointer flex items-center justify-center rounded-full bg-[#002D72] text-white border-2 border-white focus:outline-none focus:ring-4 focus:ring-blue-300 hover:scale-105 active:scale-95 transition-all duration-200 ${
           state.widgetSize === 'large' ? 'w-16 h-16' : 'w-14 h-14'
         }`}
       >
@@ -290,10 +301,11 @@ export function AccessibilityWidget() {
           aria-label={isRtl ? 'قائمة تسهيلات الاستخدام' : 'Accessibility Menu'}
           style={{
             position: 'fixed',
-            bottom: '84px',
+            bottom: state.position === 'bottom-left' ? '84px' : '154px',
             right: state.position === 'bottom-left' ? 'auto' : '20px',
             left: state.position === 'bottom-left' ? '20px' : 'auto',
-            zIndex: 9999,
+            zIndex: 99999,
+            filter: state.contrast === 'invert' ? 'invert(100%) hue-rotate(180deg)' : 'none',
           }}
           className="acc-widget-container w-[92vw] sm:w-[380px] max-h-[80vh] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in duration-200 font-sans text-slate-800 dir-auto"
         >
