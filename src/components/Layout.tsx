@@ -57,7 +57,7 @@ export function Layout({ currentView, onNavigate, onLogout, children }: LayoutPr
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFD] font-sans flex flex-col text-[#2A2B47]">
+    <div className="min-h-screen bg-pastel-canvas font-sans flex flex-col text-[#2A2B47]">
       
       {/* 1. FIXED LEFT SIDEBAR (VERTICAL NAVIGATION) */}
       <aside

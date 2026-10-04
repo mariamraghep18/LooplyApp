@@ -1,75 +1,25 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { Locale, getTranslation, isRtl } from '../locales';
 
-type Language = 'en' | 'ar';
+export type Language = Locale;
 
-interface LanguageContextType {
+export interface LanguageContextType {
   lang: Language;
   setLang: (lang: Language) => void;
-  t: (key: string) => any;
+  dir: 'rtl' | 'ltr';
+  isRtl: boolean;
+  t: (key: string, fallbackAr?: string) => string;
+  translate: (key: string, fallbackAr?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-const translations = {
-  en: {
-    // Portals
-    looplyFamily: 'Looply Family',
-    looplyPro: 'Looply Pro',
-    parentPortal: 'Parent Portal',
-    childPortal: 'Child Portal',
-    portalSelection: 'Select Your Experience',
-    comingSoon: 'Coming Soon',
-    privacyPolicy: 'Privacy Policy',
-    letsGo: 'Let\'s Go!',
-    welcomeChampion: 'What\'s your name, champion?',
-    enterName: 'Enter your name...',
-
-    // Parent Portal Fallbacks
-    dashboard: 'Dashboard',
-
-    // Child Portal
-    games: 'Games',
-    goals: 'Goals',
-    schedule: 'Schedule',
-    achievements: 'Achievements',
-    rewards: 'Rewards',
-    messages: 'Messages',
-    challenges: 'Challenges',
-    homeplan: 'Home Plan',
-    progress: 'Progress',
-    keepGoing: 'Keep going! You\'re doing great!',
-  },
-  ar: {
-    looplyFamily: 'عائلة لوبلي',
-    looplyPro: 'لوبلي برو',
-    parentPortal: 'بوابة الآباء',
-    childPortal: 'بوابة الطفل',
-    portalSelection: 'اختر تجربتك',
-    comingSoon: 'قريباً',
-    privacyPolicy: 'سياسة الخصوصية',
-    letsGo: 'هيا بنا!',
-    welcomeChampion: 'ما اسمك يا بطل؟',
-    enterName: 'اكتب اسمك...',
-
-    dashboard: 'لوحة القيادة',
-    games: 'الألعاب',
-    goals: 'الأهداف',
-    schedule: 'الجدول',
-    achievements: 'الإنجازات',
-    rewards: 'المكافآت',
-    messages: 'الرسائل',
-    challenges: 'التحديات',
-    homeplan: 'خطة المنزل',
-    progress: 'التقدم',
-    keepGoing: 'استمر! أنت تقوم بعمل رائع!',
-  }
-};
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>('en');
 
   useEffect(() => {
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    const dir = isRtl(lang) ? 'rtl' : 'ltr';
+    document.documentElement.dir = dir;
     document.documentElement.lang = lang;
   }, [lang]);
 
@@ -77,18 +27,37 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLangState(newLang);
   };
 
-  const translate = (key: string) => {
-    return (translations[lang] as any)[key] || key;
+  /**
+   * Overloaded translation helper:
+   * 1. t('common.save') => resolves 'Save' or 'حفظ' via locales
+   * 2. t('Save', 'حفظ') => bilingual inline fallback (returns 2nd arg if ar, 1st if en)
+   */
+  const t = (key: string, fallbackAr?: string): string => {
+    if (fallbackAr !== undefined) {
+      return lang === 'ar' ? fallbackAr : key;
+    }
+    return getTranslation(lang, key);
+  };
+
+  const dir: 'rtl' | 'ltr' = isRtl(lang) ? 'rtl' : 'ltr';
+
+  const contextValue: LanguageContextType = {
+    lang,
+    setLang,
+    dir,
+    isRtl: isRtl(lang),
+    t,
+    translate: t
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t: translate, translate } as any}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
-export function useLanguage() {
+export function useLanguage(): LanguageContextType {
   const context = useContext(LanguageContext);
   if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');

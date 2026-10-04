@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: #7C3AED;
+  --color-secondary: #06B6D4;
+  --color-background-pastel: #F8F5FF;
   --color-brand-purple: #633BE8;
   --color-brand-coral: #FF6086;
   --color-brand-teal: #70E4BE;
@@ -25,15 +28,39 @@
 
 :root {
   --primary-purple: #633BE8;
+  --primary: #7C3AED;
+  --secondary: #06B6D4;
+  --background-pastel: #F8F5FF;
   --vibrant-coral: #FF6086;
   --mint-teal: #70E4BE;
   --warm-peach: #FFA660;
   --soft-yellow: #FFD066;
   --lilac-purple: #9C7AF2;
   --soft-tint: #ECE8FD;
-  --dark-navy: #2A2B47;
-  --muted-slate: #73758C;
+  --dark-navy: #1E1B4B;
+  --muted-slate: #64748B;
   --off-white: #FAFAFD;
+}
+
+/* Global Soft Pastel & Modern Design System Tokens */
+.bg-pastel-canvas {
+  background: linear-gradient(135deg, #F8F5FF 0%, #FFFFFF 50%, #F3ECFF 100%) !important;
+}
+
+.bg-brand-gradient {
+  background: linear-gradient(90deg, #6366F1 0%, #7C3AED 50%, #06B6D4 100%) !important;
+}
+
+.shadow-brand-button {
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.35) !important;
+}
+
+.shadow-pastel-card {
+  box-shadow: 0 12px 32px -4px rgba(124, 58, 237, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03) !important;
+}
+
+.border-pastel {
+  border: 1px solid #EDE9FE !important;
 }
 
 /* Explicit Custom Class Definitions for Guaranteed Color Rendering */

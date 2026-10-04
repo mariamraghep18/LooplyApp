@@ -298,54 +298,54 @@ export function Billing() {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#0f172a] rounded-2xl p-6 sm:p-8 text-white flex flex-col justify-center">
-          <p className="text-sm font-medium text-slate-400 mb-2">Current Month Paid</p>
-          <h3 className="text-3xl sm:text-4xl font-bold text-white mb-2">2,450 EGP</h3>
-          <p className="text-sm text-emerald-400 font-medium">8 Sessions completed</p>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-purple-100 shadow-xl flex flex-col justify-center shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)]">
+          <p className="text-sm font-semibold text-slate-500 mb-2">Current Month Paid</p>
+          <h3 className="text-3xl sm:text-4xl font-black text-[#1E1B4B] mb-2">2,450 EGP</h3>
+          <p className="text-sm text-emerald-600 font-bold">8 Sessions completed</p>
         </div>
 
-        <div className="bg-[#f8fafc] rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden">
-          <p className="text-sm font-medium text-slate-500 mb-2">Next Scheduled Payment</p>
-          <h3 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-2">850 EGP</h3>
+        <div className="bg-white rounded-3xl border border-purple-100 shadow-xl p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)]">
+          <p className="text-sm font-semibold text-slate-500 mb-2">Next Scheduled Payment</p>
+          <h3 className="text-3xl sm:text-4xl font-black text-[#1E1B4B] mb-2">850 EGP</h3>
           <p className="text-sm text-slate-500 mb-4">Due on Oct 25, 2023</p>
-          <button className="self-start px-6 py-2 bg-sky-500 text-white rounded-xl font-semibold hover:bg-sky-600 transition-colors shadow-sm">
+          <button className="self-start px-6 py-2.5 bg-gradient-to-r from-[#6366F1] via-[#7C3AED] to-[#06B6D4] text-white rounded-2xl font-bold shadow-[0_10px_25px_-5px_rgba(99,102,241,0.35)] hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer">
             Pay Now
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-8">
-        <div className="p-6 border-b border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800">Invoice History</h3>
+      <div className="bg-white rounded-3xl shadow-xl border border-purple-100 overflow-hidden mt-8 shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)]">
+        <div className="p-6 border-b border-purple-100">
+          <h3 className="text-lg font-bold text-[#1E1B4B]">Invoice History</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-500 text-sm">
-                <th className="p-4 sm:p-6 font-medium">Invoice #</th>
-                <th className="p-4 sm:p-6 font-medium">Date</th>
-                <th className="p-4 sm:p-6 font-medium">Amount</th>
-                <th className="p-4 sm:p-6 font-medium">Status</th>
-                <th className="p-4 sm:p-6 font-medium">Action</th>
+              <tr className="border-b border-purple-100 text-slate-500 text-sm bg-slate-50/70">
+                <th className="p-4 sm:p-6 font-semibold">Invoice #</th>
+                <th className="p-4 sm:p-6 font-semibold">Date</th>
+                <th className="p-4 sm:p-6 font-semibold">Amount</th>
+                <th className="p-4 sm:p-6 font-semibold">Status</th>
+                <th className="p-4 sm:p-6 font-semibold">Action</th>
               </tr>
             </thead>
-            <tbody className="text-sm text-slate-700">
+            <tbody className="text-sm text-slate-700 divide-y divide-purple-50">
               {[
                 { id: 'INV-2023-010', date: 'Oct 01, 2023', amount: '2,450 EGP', status: 'Paid' },
                 { id: 'INV-2023-009', date: 'Sep 01, 2023', amount: '3,200 EGP', status: 'Paid' },
                 { id: 'INV-2023-008', date: 'Aug 01, 2023', amount: '3,200 EGP', status: 'Paid' },
               ].map((inv) => (
-                <tr key={inv.id} className="border-b border-slate-50 hover:bg-slate-50/50">
-                  <td className="p-4 sm:p-6 font-medium">{inv.id}</td>
+                <tr key={inv.id} className="hover:bg-purple-50/40 transition-colors">
+                  <td className="p-4 sm:p-6 font-bold text-[#7C3AED]">{inv.id}</td>
                   <td className="p-4 sm:p-6 text-slate-500">{inv.date}</td>
-                  <td className="p-4 sm:p-6 font-semibold">{inv.amount}</td>
+                  <td className="p-4 sm:p-6 font-bold text-[#1E1B4B]">{inv.amount}</td>
                   <td className="p-4 sm:p-6">
-                    <span className="px-3 py-1 bg-emerald-100 text-emerald-700 font-medium rounded-full text-xs">
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold rounded-full text-xs">
                       {inv.status}
                     </span>
                   </td>
                   <td className="p-4 sm:p-6">
-                    <button className="text-sky-600 hover:text-sky-700 font-medium flex items-center gap-1">
+                    <button className="text-[#7C3AED] hover:text-purple-800 font-bold flex items-center gap-1 cursor-pointer">
                       <Download className="w-4 h-4" /> PDF
                     </button>
                   </td>
@@ -361,21 +361,22 @@ export function Billing() {
 
 export function Support() {
   const supportChannels = [
-    { title: 'Live Chat', desc: 'Chat with our support team', icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { title: 'Call Center', desc: 'Available 24/7 for urgent issues', icon: Phone, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { title: 'Help Center', desc: 'Guides and FAQs', icon: BookOpen, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { title: 'Report Issue', desc: 'Submit a ticket', icon: AlertTriangle, color: 'text-rose-500', bg: 'bg-rose-50' },
+    { title: 'Live Chat', desc: 'Chat with our support team', icon: MessageSquare, color: 'text-[#7C3AED]', bg: 'bg-purple-50' },
+    { title: 'Call Center', desc: 'Available 24/7 for urgent issues', icon: Phone, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { title: 'Help Center', desc: 'Guides and FAQs', icon: BookOpen, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { title: 'Report Issue', desc: 'Submit a ticket', icon: AlertTriangle, color: 'text-rose-600', bg: 'bg-rose-50' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-900 rounded-2xl p-8 text-white shadow-lg">
-        <h2 className="text-3xl font-bold mb-2">How can we help?</h2>
-        <p className="text-slate-300 max-w-lg">Choose a support channel below or search our help center for quick answers.</p>
+      <div className="bg-white rounded-3xl p-8 text-[#1E1B4B] border border-purple-100 shadow-xl shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-100/40 rounded-bl-full pointer-events-none" />
+        <h2 className="text-3xl font-extrabold mb-2 text-[#1E1B4B]">How can we help?</h2>
+        <p className="text-slate-500 max-w-lg font-medium">Choose a support channel below or search our help center for quick answers.</p>
         
         <div className="mt-6 relative max-w-xl">
-          <Search className="w-5 h-5 absolute left-3 top-3.5 text-slate-400" />
-          <input type="text" placeholder="Search for help..." className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+          <Search className="w-5 h-5 absolute left-3.5 top-3.5 text-purple-400" />
+          <input type="text" placeholder="Search for help..." className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-purple-100 focus:border-[#7C3AED] focus:bg-white transition-all" />
         </div>
       </div>
 

@@ -1,41 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Timer, Play, Pause, RotateCcw, Flag, Minus, X, ChevronUp, Video, Activity, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  Flag,
+  ChevronUp,
+  Minus,
+  X,
+  Timer,
+  Video,
+  Activity,
+  User,
+} from 'lucide-react';
 
-export interface SessionTimerProps {
-  isTelehealthActive?: boolean;
-  isAbaActive?: boolean;
+interface SessionTimerProps {
   activePatientName?: string;
   activePatientAvatar?: string;
+  isTelehealthActive?: boolean;
+  isAbaActive?: boolean;
 }
 
 export function SessionTimer({
+  activePatientName = 'Maya Lin',
+  activePatientAvatar = 'https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&q=80&w=200',
   isTelehealthActive = false,
   isAbaActive = false,
-  activePatientName = 'Liam Miller',
-  activePatientAvatar = 'https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&q=80&w=150'
 }: SessionTimerProps) {
-  const [secondsLeft, setSecondsLeft] = useState<number>(45 * 60); // Default 45 min
+  const [secondsLeft, setSecondsLeft] = useState<number>(45 * 60); // 45 mins default
   const [totalDuration, setTotalDuration] = useState<number>(45 * 60);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
   const [isClosed, setIsClosed] = useState<boolean>(false);
   const [laps, setLaps] = useState<string[]>([]);
 
-  // Automatically start timer if telehealth or ABA is active
-  useEffect(() => {
-    if (isTelehealthActive || isAbaActive) {
-      setIsRunning(true);
-      setIsClosed(false);
-    }
-  }, [isTelehealthActive, isAbaActive]);
-
+  // Timer Tick
   useEffect(() => {
     let interval: any = null;
     if (isRunning && secondsLeft > 0) {
       interval = setInterval(() => {
-        setSecondsLeft((prev) => prev - 1);
+        setSecondsLeft((prev) => Math.max(0, prev - 1));
       }, 1000);
-    } else if (secondsLeft === 0) {
+    } else if (secondsLeft === 0 && isRunning) {
       setIsRunning(false);
     }
     return () => clearInterval(interval);
@@ -45,17 +50,17 @@ export function SessionTimer({
     return (
       <button
         onClick={() => setIsClosed(false)}
-        className="fixed bottom-4 right-4 z-50 p-3 bg-[#0B1120] text-purple-400 border border-slate-700/80 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-black hover:bg-[#1E293B] hover:text-purple-300 transition-all group"
-        title="Open Session Timer"
+        className="fixed bottom-4 right-4 z-50 p-3 bg-white text-purple-700 rounded-2xl shadow-pastel-card border border-purple-100 flex items-center gap-2 hover:bg-purple-50 transition-all group font-bold text-xs"
+        title="Open Floating Session Timer"
       >
         <div className="relative">
-          <Timer className="w-4 h-4 text-purple-400 animate-spin-slow group-hover:scale-110 transition-transform" />
+          <Timer className="w-4 h-4 text-purple-600 animate-spin-slow group-hover:scale-110 transition-transform" />
           {(isTelehealthActive || isAbaActive) && (
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           )}
         </div>
         <span>Session Timer</span>
-        <span className="px-2 py-0.5 bg-slate-800 text-emerald-400 font-mono text-[11px] rounded-lg border border-slate-700">
+        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-mono text-[11px] rounded-lg border border-emerald-200">
           {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, '0')}
         </span>
       </button>
@@ -69,9 +74,9 @@ export function SessionTimer({
   };
 
   const handlePreset = (mins: number) => {
-    const newTotal = mins * 60;
-    setTotalDuration(newTotal);
-    setSecondsLeft(newTotal);
+    const total = mins * 60;
+    setTotalDuration(total);
+    setSecondsLeft(total);
     setIsRunning(false);
     setLaps([]);
   };
@@ -92,16 +97,16 @@ export function SessionTimer({
   const progressPct = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-84 bg-[#0B1120]/95 backdrop-blur-md text-slate-100 border border-slate-700/80 rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.6)] overflow-hidden font-sans transition-all duration-300">
+    <div className="fixed bottom-4 right-4 z-50 w-84 bg-white/95 backdrop-blur-md text-slate-800 border border-purple-100 rounded-3xl shadow-pastel-card overflow-hidden font-sans transition-all duration-300">
       
       {/* ACTIVE CLINICAL SESSION BADGE BANNER */}
       {(isTelehealthActive || isAbaActive) && (
-        <div className="bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 border-b border-emerald-500/30 px-4 py-1.5 flex items-center justify-between text-[11px] font-extrabold">
+        <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-1.5 flex items-center justify-between text-[11px] font-extrabold text-emerald-800">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-300 uppercase tracking-wider flex items-center gap-1">
-              {isTelehealthActive && <Video className="w-3 h-3 text-cyan-400 inline" />}
-              {isAbaActive && <Activity className="w-3 h-3 text-amber-400 inline" />}
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-700 uppercase tracking-wider flex items-center gap-1 font-bold">
+              {isTelehealthActive && <Video className="w-3 h-3 text-cyan-600 inline" />}
+              {isAbaActive && <Activity className="w-3 h-3 text-amber-500 inline" />}
               {isTelehealthActive && isAbaActive
                 ? 'Telehealth & ABA Live'
                 : isTelehealthActive
@@ -110,23 +115,23 @@ export function SessionTimer({
             </span>
           </div>
 
-          <span className="text-[10px] font-mono bg-emerald-900/60 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-500/30">
+          <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
             LIVE SESSION
           </span>
         </div>
       )}
 
       {/* HEADER */}
-      <div className="bg-[#1E293B]/90 border-b border-slate-700/80 px-4 py-2.5 flex items-center justify-between">
+      <div className="bg-white border-b border-purple-100 px-4 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-xl bg-purple-100 text-[#7C3AED] flex items-center justify-center border border-purple-200">
             <Timer className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-xs font-black tracking-wide text-white uppercase block">Live Session Timer</span>
+            <span className="text-xs font-black tracking-wide text-slate-900 uppercase block">Live Session Timer</span>
             {activePatientName && (
-              <div className="flex items-center gap-1 text-[10px] text-purple-300 font-semibold">
-                <User className="w-3 h-3 text-purple-400" />
+              <div className="flex items-center gap-1 text-[10px] text-purple-600 font-semibold">
+                <User className="w-3 h-3 text-purple-500" />
                 <span>Patient: {activePatientName}</span>
               </div>
             )}
@@ -136,14 +141,14 @@ export function SessionTimer({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-purple-700 rounded-lg hover:bg-purple-50 transition-colors"
             title={isMinimized ? 'Expand Timer' : 'Minimize Timer'}
           >
             {isMinimized ? <ChevronUp className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
           </button>
           <button
             onClick={() => setIsClosed(true)}
-            className="p-1.5 text-slate-400 hover:text-red-400 rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
             title="Close Timer Widget"
           >
             <X className="w-4 h-4" />
@@ -156,43 +161,43 @@ export function SessionTimer({
         <div className="p-4 space-y-4">
           
           {/* CURRENT PATIENT BADGE CARD */}
-          <div className="flex items-center justify-between p-2.5 bg-[#0F172A] border border-slate-700/80 rounded-xl">
+          <div className="flex items-center justify-between p-2.5 bg-purple-50/60 border border-purple-100 rounded-2xl">
             <div className="flex items-center gap-2.5">
               <img
                 src={activePatientAvatar}
                 alt={activePatientName}
-                className="w-8 h-8 rounded-lg object-cover border border-purple-500/40"
+                className="w-8 h-8 rounded-lg object-cover border border-purple-200"
               />
               <div>
-                <p className="text-xs font-black text-slate-100">{activePatientName}</p>
-                <p className="text-[10px] font-medium text-slate-400">Target: 3-Word Sentence Expansion</p>
+                <p className="text-xs font-black text-slate-900">{activePatientName}</p>
+                <p className="text-[10px] font-medium text-slate-500">Target: 3-Word Sentence Expansion</p>
               </div>
             </div>
 
-            <span className="px-2 py-0.5 bg-purple-950 text-purple-300 border border-purple-800/50 rounded-full text-[10px] font-bold">
+            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 border border-purple-200 rounded-full text-[10px] font-bold">
               Active Patient
             </span>
           </div>
 
           {/* DIGITAL WATCH DISPLAY */}
-          <div className="bg-[#0F172A] border border-slate-700/80 rounded-xl p-4 text-center relative overflow-hidden shadow-inner">
-            <div className="text-4xl font-black font-mono tracking-wider text-purple-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.35)]">
+          <div className="bg-slate-50 border border-purple-100 rounded-2xl p-4 text-center relative overflow-hidden">
+            <div className="text-4xl font-black font-mono tracking-wider text-emerald-600">
               {formatTime(secondsLeft)}
             </div>
 
             {/* TIME PROGRESS BAR WITH CHECKPOINTS */}
             <div className="mt-3.5 space-y-1">
-              <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-700/80 relative">
+              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden border border-slate-100 relative">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400 rounded-full transition-all duration-300 shadow-sm"
+                  className="h-full bg-brand-gradient rounded-full transition-all duration-300 shadow-sm"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
 
               <div className="flex justify-between text-[9px] font-bold text-slate-400 px-0.5">
                 <span>0:00</span>
-                <span className={progressPct >= 50 ? 'text-purple-300 font-extrabold' : ''}>Halfway</span>
-                <span className={progressPct >= 100 ? 'text-emerald-400 font-extrabold' : ''}>Target End</span>
+                <span className={progressPct >= 50 ? 'text-purple-600 font-extrabold' : ''}>Halfway</span>
+                <span className={progressPct >= 100 ? 'text-emerald-600 font-extrabold' : ''}>Target End</span>
               </div>
             </div>
           </div>
@@ -201,7 +206,7 @@ export function SessionTimer({
           <div className="flex items-center justify-between gap-2">
             <button
               onClick={handleReset}
-              className="p-2.5 bg-[#0F172A] hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-700 transition-all"
+              className="p-2.5 bg-white hover:bg-purple-50 text-slate-600 hover:text-purple-700 rounded-xl border border-purple-100 transition-all"
               title="Reset Timer"
             >
               <RotateCcw className="w-4 h-4" />
@@ -209,10 +214,10 @@ export function SessionTimer({
 
             <button
               onClick={() => setIsRunning(!isRunning)}
-              className={`flex-1 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-all ${
+              className={`flex-1 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition-all ${
                 isRunning
-                  ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/25'
-                  : 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/30'
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/25'
+                  : 'bg-brand-gradient hover:opacity-95 text-white shadow-brand-button'
               }`}
             >
               {isRunning ? (
@@ -231,7 +236,7 @@ export function SessionTimer({
             <button
               onClick={handleLap}
               disabled={!isRunning}
-              className="p-2.5 bg-[#0F172A] hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-700 transition-all disabled:opacity-40"
+              className="p-2.5 bg-white hover:bg-purple-50 text-slate-600 hover:text-purple-700 rounded-xl border border-purple-100 transition-all disabled:opacity-40"
               title="Record Lap / Checkpoint"
             >
               <Flag className="w-4 h-4" />
@@ -244,10 +249,10 @@ export function SessionTimer({
               <button
                 key={mins}
                 onClick={() => handlePreset(mins)}
-                className={`flex-1 py-1.5 rounded-lg text-[11px] font-black transition-all border ${
+                className={`flex-1 py-1.5 rounded-xl text-[11px] font-black transition-all border ${
                   totalDuration === mins * 60
-                    ? 'bg-purple-600/30 text-purple-300 border-purple-500/60 shadow-sm'
-                    : 'bg-[#0F172A] text-slate-400 border-slate-700 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-purple-50 text-purple-700 border-purple-300 shadow-sm'
+                    : 'bg-white text-slate-600 border-purple-100 hover:bg-purple-50 hover:text-purple-700'
                 }`}
               >
                 {mins} min
@@ -257,11 +262,11 @@ export function SessionTimer({
 
           {/* LAPS RECORDING LIST */}
           {laps.length > 0 && (
-            <div className="pt-2 border-t border-slate-700/80 space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Session Checkpoints</span>
+            <div className="pt-2 border-t border-purple-100 space-y-1.5">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Session Checkpoints</span>
               <div className="flex flex-wrap gap-1">
                 {laps.map((lap, i) => (
-                  <span key={i} className="px-2 py-0.5 bg-[#0F172A] text-purple-300 rounded-md text-[10px] font-mono font-bold border border-slate-700">
+                  <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-md text-[10px] font-mono font-bold border border-purple-200">
                     Lap {laps.length - i}: {lap}
                   </span>
                 ))}

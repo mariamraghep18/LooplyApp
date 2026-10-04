@@ -1,17 +1,8 @@
-﻿/**
- * NovaSchema.ts — NovaCRM Data Model (Source of Truth)
+/**
+ * LooplyProSchema.ts — Looply Pro Data Model (Source of Truth)
  *
  * This file defines the structural schema (interfaces and union types) for the
- * NovaCRM subsystem. It is the single authoritative Data Model layer.
- *
- * Architecture:
- *   NovaCRM XML System
- *   ├── NovaSchema.ts  ← Data Model  (this file — defines structure/types)
- *   └── NovaData.ts    ← Data        (seed data that conforms to this schema)
- *
- * All data in NovaData.ts must conform to the types defined here.
- * All NovaCRM components import types from './NovaData' (which re-exports
- * these types), so existing imports are never broken.
+ * Looply Pro Clinical CRM subsystem.
  */
 
 // ─────────────────────────────────────────────────────────────────────────────

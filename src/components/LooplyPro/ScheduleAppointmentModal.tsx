@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar as CalendarIcon, Clock, Video, MapPin, FileText, UserCheck } from 'lucide-react';
-import { Appointment, PatientRecord } from './NovaData';
+import { X, Calendar as CalendarIcon, Clock, MapPin, FileText, UserCheck } from 'lucide-react';
+import { Appointment, PatientRecord } from './LooplyProData';
 
 export interface ScheduleAppointmentModalProps {
   isOpen: boolean;
@@ -85,31 +85,31 @@ export function ScheduleAppointmentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fade-in font-sans">
+    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in font-sans">
       <div 
-        className="bg-[#1E293B] border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all text-slate-100"
+        className="bg-white border border-purple-100 rounded-3xl w-full max-w-lg shadow-pastel-card overflow-hidden transform transition-all text-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-[#0F172A] px-6 py-4 border-b border-slate-700/80 flex items-center justify-between">
+        <div className="bg-white px-6 py-4 border-b border-purple-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-purple-100 border border-purple-200 text-[#7C3AED] flex items-center justify-center">
               <CalendarIcon className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Schedule Appointment</span>
-                <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-emerald-950 text-emerald-300 rounded-full border border-emerald-800/50">
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                   Live Booking
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">Book clinical telehealth sessions or room appointments</p>
+              <p className="text-xs text-slate-500">Book clinical telehealth sessions or room appointments</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+            className="p-2 text-slate-400 hover:text-purple-600 rounded-xl hover:bg-purple-50 transition-colors"
             title="Close (Esc)"
           >
             <X className="w-5 h-5" />
@@ -121,10 +121,10 @@ export function ScheduleAppointmentModal({
           
           {/* Patient Selector */}
           <div>
-            <label className="block text-slate-300 font-bold mb-1.5 flex items-center gap-1.5">
-              <UserCheck className="w-3.5 h-3.5 text-purple-400" />
+            <label className="block text-slate-700 font-bold mb-1.5 flex items-center gap-1.5">
+              <UserCheck className="w-3.5 h-3.5 text-purple-600" />
               <span>Select Patient</span>
-              <span className="text-purple-400">*</span>
+              <span className="text-purple-600">*</span>
             </label>
             <select
               value={patientId}
@@ -132,30 +132,30 @@ export function ScheduleAppointmentModal({
                 setPatientId(e.target.value);
                 if (errors.patientId) setErrors({ ...errors, patientId: '' });
               }}
-              className={`w-full px-3.5 py-2.5 bg-[#0F172A] border ${
-                errors.patientId ? 'border-red-500' : 'border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20'
-              } rounded-xl text-slate-100 focus:outline-none font-medium transition-all`}
+              className={`w-full px-3.5 py-2.5 bg-slate-50 border ${
+                errors.patientId ? 'border-red-500 focus:ring-red-100' : 'border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100'
+              } rounded-xl text-slate-800 focus:outline-none font-medium transition-all`}
             >
               {patients.length === 0 ? (
                 <option value="">No patients available</option>
               ) : (
-                patients.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.firstName} {p.lastName} — {p.primaryDiagnosis}
+                patients.map((pt) => (
+                  <option key={pt.id} value={pt.id}>
+                    {pt.firstName} {pt.lastName}
                   </option>
                 ))
               )}
             </select>
-            {errors.patientId && <p className="mt-1 text-[11px] text-red-400 font-medium">{errors.patientId}</p>}
+            {errors.patientId && <p className="text-red-500 text-[11px] mt-1">{errors.patientId}</p>}
           </div>
 
-          {/* Date & Time Picker */}
+          {/* Date & Time Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5 flex items-center gap-1.5">
-                <CalendarIcon className="w-3.5 h-3.5 text-purple-400" />
+              <label className="block text-slate-700 font-bold mb-1.5 flex items-center gap-1.5">
+                <CalendarIcon className="w-3.5 h-3.5 text-purple-600" />
                 <span>Date</span>
-                <span className="text-purple-400">*</span>
+                <span className="text-purple-600">*</span>
               </label>
               <input
                 type="date"
@@ -164,20 +164,20 @@ export function ScheduleAppointmentModal({
                   setDate(e.target.value);
                   if (errors.date) setErrors({ ...errors, date: '' });
                 }}
-                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-slate-100 focus:outline-none font-medium transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 rounded-xl text-slate-800 focus:outline-none font-medium transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-purple-400" />
+              <label className="block text-slate-700 font-bold mb-1.5 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-purple-600" />
                 <span>Time</span>
-                <span className="text-purple-400">*</span>
+                <span className="text-purple-600">*</span>
               </label>
               <select
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-slate-100 focus:outline-none font-medium transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 rounded-xl text-slate-800 focus:outline-none font-medium transition-all"
               >
                 <option value="08:00 AM">08:00 AM</option>
                 <option value="09:00 AM">09:00 AM</option>
@@ -193,7 +193,7 @@ export function ScheduleAppointmentModal({
 
           {/* Session Duration Selector */}
           <div>
-            <label className="block text-slate-300 font-bold mb-1.5">Session Duration</label>
+            <label className="block text-slate-700 font-bold mb-1.5">Session Duration</label>
             <div className="grid grid-cols-3 gap-2">
               {[30, 45, 60].map((mins) => (
                 <button
@@ -202,8 +202,8 @@ export function ScheduleAppointmentModal({
                   onClick={() => setDurationMins(mins)}
                   className={`py-2 rounded-xl text-xs font-black transition-all border ${
                     durationMins === mins
-                      ? 'bg-purple-600/30 text-purple-300 border-purple-500 shadow-md shadow-purple-900/20'
-                      : 'bg-[#0F172A] text-slate-400 border-slate-700 hover:text-slate-200 hover:border-slate-600'
+                      ? 'bg-purple-100 text-purple-700 border-purple-300 shadow-sm'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-purple-50 hover:text-purple-700'
                   }`}
                 >
                   {mins} min
@@ -215,11 +215,11 @@ export function ScheduleAppointmentModal({
           {/* Appointment Type & Location / Mode */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5">Appointment Type</label>
+              <label className="block text-slate-700 font-bold mb-1.5">Appointment Type</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-slate-100 focus:outline-none font-medium transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 rounded-xl text-slate-800 focus:outline-none font-medium transition-all"
               >
                 <option value="Speech Therapy">Speech Therapy</option>
                 <option value="Occupational Therapy">Occupational Therapy</option>
@@ -230,14 +230,14 @@ export function ScheduleAppointmentModal({
             </div>
 
             <div>
-              <label className="block text-slate-300 font-bold mb-1.5 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <label className="block text-slate-700 font-bold mb-1.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-cyan-500" />
                 <span>Location / Mode</span>
               </label>
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-slate-100 focus:outline-none font-medium transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 rounded-xl text-slate-800 focus:outline-none font-medium transition-all"
               >
                 <option value="Telehealth Video Room">Telehealth Video Room</option>
                 <option value="In-Clinic / Room 101">In-Clinic / Room 101</option>
@@ -249,7 +249,7 @@ export function ScheduleAppointmentModal({
 
           {/* Notes / Agenda */}
           <div>
-            <label className="block text-slate-300 font-bold mb-1.5 flex items-center gap-1.5">
+            <label className="block text-slate-700 font-bold mb-1.5 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-slate-400" />
               <span>Notes / Session Agenda</span>
             </label>
@@ -258,22 +258,22 @@ export function ScheduleAppointmentModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Focus on 3-word phrase targets and AAC board usage..."
-              className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none font-medium transition-all"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none font-medium transition-all"
             />
           </div>
 
           {/* Actions */}
-          <div className="pt-4 border-t border-slate-700/80 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-purple-100 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold rounded-xl border border-slate-700 transition-all"
+              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-xl shadow-lg shadow-purple-600/30 transition-all flex items-center gap-2"
+              className="px-6 py-2.5 bg-brand-gradient hover:opacity-95 text-white font-black rounded-xl shadow-brand-button transition-all flex items-center gap-2"
             >
               <CalendarIcon className="w-4 h-4" />
               <span>Schedule Appointment</span>

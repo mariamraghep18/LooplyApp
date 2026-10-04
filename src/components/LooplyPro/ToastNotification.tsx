@@ -21,17 +21,17 @@ export function ToastNotification({ message, isOpen, onClose, duration = 3500 }:
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-5 right-5 z-[150] bg-slate-900 text-white border border-emerald-500/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 animate-slide-in max-w-sm">
-      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+    <div className="fixed top-5 right-5 z-[150] bg-white text-slate-800 border border-emerald-200 rounded-2xl p-4 shadow-pastel-card flex items-center gap-3 animate-slide-in max-w-sm">
+      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
         <CheckCircle2 className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-black text-white">Action Completed</p>
-        <p className="text-xs text-slate-300 font-medium truncate">{message}</p>
+        <p className="text-xs font-black text-slate-900">Action Completed</p>
+        <p className="text-xs text-slate-600 font-medium truncate">{message}</p>
       </div>
       <button
         onClick={onClose}
-        className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+        className="p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
       >
         <X className="w-4 h-4" />
       </button>

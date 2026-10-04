@@ -1,21 +1,11 @@
 /**
- * NovaData.ts — NovaCRM Data Layer
+ * LooplyProData.ts — Looply Pro Clinical CRM Data Layer
  *
- * This file is the Data layer of the NovaCRM XML System.
- * All types/interfaces are imported from NovaSchema.ts (the Data Model),
- * which is the single authoritative source of truth for data structure.
- *
- * Architecture:
- *   NovaCRM XML System
- *   ├── NovaSchema.ts  ← Data Model  (all interfaces — source of truth)
- *   └── NovaData.ts    ← Data        (this file — seed data + re-exports)
- *
- * Types are re-exported from this file so all existing component imports
- * (e.g. `import { PatientRecord } from './NovaData'`) continue to work
- * without any changes.
+ * This file is the Data layer of the Looply Pro Clinical CRM System.
+ * All types/interfaces are imported from LooplyProSchema.ts (the Data Model).
  */
 
-// ── Data Model import & re-export (preserves all existing consumer imports) ──
+// ── Data Model import & re-export ──
 export type {
   PatientRecord,
   Appointment,
@@ -28,18 +18,18 @@ export type {
   IntakeSubmission,
   WaitlistEntry,
   TeamMember,
-} from './NovaSchema';
+} from './LooplyProSchema';
 
-// ── Direct imports needed to type the seed-data arrays below ─────────────────
+// ── Direct imports needed to type the seed-data arrays below ──
 import type {
   PatientRecord,
   Appointment,
   GoalTemplate,
   WaitlistEntry,
   TeamMember,
-} from './NovaSchema';
+} from './LooplyProSchema';
 
-export const INITIAL_NOVA_PATIENTS: PatientRecord[] = [
+export const INITIAL_PRO_PATIENTS: PatientRecord[] = [
   {
     id: "p-101",
     firstName: "Liam",
@@ -201,7 +191,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     name: "Dr. Mariam Raghep",
     role: "Lead Speech Pathologist (CCC-SLP)",
     specialty: "Pediatric Speech & AAC",
-    email: "mariam.raghep@novacrm.com",
+    email: "mariam.raghep@looply.com",
     phone: "(555) 101-2020",
     activeCaseload: 18,
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150"
@@ -211,7 +201,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     name: "Sarah Jenkins",
     role: "Occupational Therapist (OTR/L)",
     specialty: "Sensory Integration & Fine Motor",
-    email: "sarah.j@novacrm.com",
+    email: "sarah.j@looply.com",
     phone: "(555) 303-4040",
     activeCaseload: 14,
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=150"
@@ -221,7 +211,7 @@ export const INITIAL_TEAM: TeamMember[] = [
     name: "Omar Farooq",
     role: "Behavior Analyst (BCBA)",
     specialty: "Applied Behavior Analysis & ABA",
-    email: "omar.f@novacrm.com",
+    email: "omar.f@looply.com",
     phone: "(555) 505-6060",
     activeCaseload: 12,
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150"

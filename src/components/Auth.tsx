@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User as UserIcon, ArrowRight, Shield, Phone, Upload, Paperclip, CreditCard, Heart, Check, Globe, Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowRight, Shield, Phone, Upload, Check, Globe, Eye, EyeOff, ChevronLeft, CreditCard } from 'lucide-react';
 import { ViewState } from '../types';
 import { useSharedData } from '../shared/SharedData';
 import { useLanguage } from '../shared/LanguageContext';
@@ -12,6 +12,7 @@ interface AuthProps {
 
 export function Login({ onLogin, onNavigate }: AuthProps) {
   const { lang, setLang } = useLanguage();
+  const isRTL = lang === 'ar';
   const [loginMode, setLoginMode] = useState<'email' | 'forgot'>('email');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -29,19 +30,20 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F1FE] text-[#1D1A23] flex flex-col items-center justify-center p-4 relative overflow-x-hidden font-sans">
-      {/* Ambient Decorative Background Glows */}
-      <div className="absolute top-[-50px] left-[-50px] w-64 h-64 bg-[#E9DDFF] rounded-full blur-2xl opacity-60 pointer-events-none"></div>
-      <div className="absolute bottom-[10%] right-[5%] w-80 h-80 bg-[#C9E6FF] rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+    <div className={`min-h-screen bg-pastel-canvas text-[#1E1B4B] flex flex-col justify-between items-center p-4 sm:p-6 relative overflow-x-hidden font-sans ${isRTL ? 'rtl' : 'ltr'}`}>
+      {/* Subtle Ambient Glows */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-500/[0.12] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-400/[0.08] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#7C3AED_0.75px,transparent_0.75px)] [background-size:28px_28px] opacity-10 pointer-events-none" />
 
       {/* Top Bar with Back Arrow and Logo Header */}
-      <div className="w-full max-w-md flex justify-between items-center mb-6 relative z-10">
+      <div className="w-full max-w-md flex justify-between items-center z-10 pt-2">
         <button 
           onClick={() => onNavigate('portal-selection')}
-          className="p-2.5 rounded-full bg-white/80 border border-[#6B38D4]/15 text-[#6B38D4] hover:bg-white transition-all shadow-xs"
+          className="p-2.5 rounded-2xl bg-white/90 border border-purple-100/80 text-[#7C3AED] hover:bg-white transition-all shadow-xs cursor-pointer"
           title={lang === 'ar' ? 'الرجوع' : 'Back'}
         >
-          <ChevronLeft className="w-5 h-5" />
+          {isRTL ? <ChevronLeft className="w-5 h-5 rotate-180" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
 
         {/* Brand Logo Centered */}
@@ -53,22 +55,22 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
         <button 
           type="button"
           onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white border border-[#6B38D4]/20 text-[#6B38D4] font-extrabold text-xs shadow-xs hover:bg-[#F3EBF8] transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-purple-100/80 text-[#7C3AED] font-extrabold text-xs shadow-xs hover:bg-purple-50 transition-all cursor-pointer"
         >
-          <Globe className="w-4 h-4 text-[#6B38D4]" />
+          <Globe className="w-4 h-4 text-[#7C3AED]" />
           <span>{lang === 'en' ? 'العربية' : 'English'}</span>
         </button>
       </div>
 
       {/* Main Form Container */}
-      <div className="w-full max-w-md relative z-10 animate-fade-in space-y-6">
+      <div className="w-full max-w-md relative z-10 animate-fade-in space-y-6 my-auto py-4">
         
         {/* ================= EMAIL & PASSWORD LOGIN (Parent Portal) ================= */}
         {loginMode === 'email' && (
           <div className="flex flex-col items-center text-center space-y-6">
             
             {/* Waving Purple Mascot Header */}
-            <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_8px_20px_rgba(107,56,212,0.15)] border-2 border-white flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_12px_32px_rgba(124,58,237,0.15)] border-2 border-purple-100 flex items-center justify-center overflow-hidden">
               <img 
                 src="/mascot_waving.png" 
                 alt="Waving Purple Mascot" 
@@ -79,19 +81,19 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
 
             {/* Title Header */}
             <div className="space-y-1">
-              <h1 className="text-3xl font-black text-[#1D1A23]">
+              <h1 className="text-3xl font-extrabold text-[#1E1B4B]">
                 {lang === 'ar' ? 'أهلاً بعودتك' : 'Welcome Back'}
               </h1>
-              <p className="text-sm font-semibold text-[#494454]">
-                {lang === 'ar' ? 'سجل الدخول لمتابعة رحلتك' : 'Log in to continue your journey.'}
+              <p className="text-sm font-semibold text-slate-500">
+                {lang === 'ar' ? 'سجل الدخول لمتابعة رحلة طفلك' : 'Log in to continue your journey.'}
               </p>
             </div>
 
             {/* Form Card */}
-            <div className="w-full bg-white rounded-[28px] p-6 sm:p-8 shadow-[0_12px_32px_rgba(107,56,212,0.12)] border border-[#E9DDFF] text-left space-y-4">
+            <div className="w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-purple-100 text-left rtl:text-right space-y-4 shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)]">
               <form onSubmit={(e) => { e.preventDefault(); onLogin(); }} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#1D1A23] mb-1.5">
+                  <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                     {lang === 'ar' ? 'البريد الإلكتروني' : 'Email'}
                   </label>
                   <div className="relative">
@@ -101,14 +103,14 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={lang === 'ar' ? 'أدخل البريد الإلكتروني' : 'Enter your email'}
-                      className="w-full h-14 pl-10 pr-4 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
+                      className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                     />
-                    <Mail className="w-5 h-5 text-[#CBC3D7] absolute left-3.5 top-4" />
+                    <Mail className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#1D1A23] mb-1.5">
+                  <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                     {lang === 'ar' ? 'كلمة المرور' : 'Password'}
                   </label>
                   <div className="relative">
@@ -118,13 +120,13 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={lang === 'ar' ? 'أدخل كلمة المرور' : 'Enter your password'}
-                      className="w-full h-14 pl-10 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
+                      className="w-full h-14 pl-11 pr-11 rtl:pr-11 rtl:pl-11 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                     />
-                    <Lock className="w-5 h-5 text-[#CBC3D7] absolute left-3.5 top-4" />
+                    <Lock className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-4 text-[#CBC3D7] hover:text-[#6B38D4]"
+                      className="absolute right-3.5 rtl:left-3.5 rtl:right-auto top-4.5 text-slate-400 hover:text-[#7C3AED] cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -135,7 +137,7 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
                   <button
                     type="button"
                     onClick={() => setLoginMode('forgot')}
-                    className="text-[#00C4CC] hover:underline"
+                    className="text-[#7C3AED] hover:text-[#5B21B6] hover:underline cursor-pointer"
                   >
                     {lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?'}
                   </button>
@@ -143,7 +145,7 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
 
                 <button
                   type="submit"
-                  className="w-full h-14 bg-gradient-to-r from-[#6B38D4] to-[#8B5CF6] text-white rounded-2xl text-base font-bold shadow-[0_8px_20px_rgba(107,56,212,0.24)] hover:shadow-lg hover:scale-101 active:scale-98 transition-all flex items-center justify-center gap-2 mt-2"
+                  className="w-full h-14 bg-gradient-to-r from-[#6366F1] via-[#7C3AED] to-[#06B6D4] text-white rounded-2xl text-base font-bold shadow-[0_10px_25px_-5px_rgba(99,102,241,0.35)] hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
                 >
                   <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Log In'}</span>
                 </button>
@@ -152,11 +154,11 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
 
             {/* Register Link */}
             <div className="pt-1">
-              <p className="text-sm font-medium text-[#494454]">
+              <p className="text-sm font-medium text-slate-500">
                 {lang === 'ar' ? 'ليس لديك حساب؟ ' : "Don't have an account? "}
                 <button
                   onClick={() => onNavigate('register')}
-                  className="font-bold text-[#6B38D4] hover:underline"
+                  className="font-bold text-[#7C3AED] hover:underline cursor-pointer"
                 >
                   {lang === 'ar' ? 'إنشاء حساب جديد' : 'Sign up'}
                 </button>
@@ -170,45 +172,44 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
         {loginMode === 'forgot' && (
           <div className="flex flex-col items-center text-center space-y-6">
             
-            {/* Angry / Determined Purple Mascot Header */}
-            <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_8px_20px_rgba(107,56,212,0.15)] border-2 border-white flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_12px_32px_rgba(124,58,237,0.15)] border-2 border-purple-100 flex items-center justify-center overflow-hidden">
               <img 
                 src="/mascot_angry.jpg" 
-                alt="Angry Purple Mascot" 
+                alt="Purple Mascot" 
                 className="w-full h-full object-contain"
                 onError={(e) => { (e.target as HTMLElement).setAttribute('src', '/mascot.png'); }}
               />
             </div>
 
             <div className="space-y-1">
-              <h1 className="text-3xl font-black text-[#1D1A23]">
+              <h1 className="text-3xl font-extrabold text-[#1E1B4B]">
                 {lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?'}
               </h1>
-              <p className="text-sm font-semibold text-[#494454] max-w-xs mx-auto leading-relaxed">
+              <p className="text-sm font-semibold text-slate-500 max-w-xs mx-auto leading-relaxed">
                 {lang === 'ar' 
                   ? 'لا تقلق! أدخل بريدك الإلكتروني أدناه وسنرسل لك رابط إعادة تعيين كلمة المرور.' 
-                  : "Don't worry! Enter your email address below and we'll send you a little magic link to reset it."}
+                  : "Don't worry! Enter your email address below and we'll send you a link to reset it."}
               </p>
             </div>
 
             {/* Form Card */}
-            <div className="w-full bg-white rounded-[28px] p-6 shadow-[0_12px_32px_rgba(107,56,212,0.08)] border border-[#E9DDFF] text-left space-y-5">
+            <div className="w-full bg-white rounded-3xl p-6 shadow-xl border border-purple-100 text-left rtl:text-right space-y-5 shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)]">
               {resetSent ? (
-                <div className="bg-[#E9DDFF]/60 border border-[#6B38D4]/30 p-4 rounded-2xl text-center space-y-2">
-                  <div className="w-10 h-10 bg-[#6B38D4] text-white rounded-full flex items-center justify-center mx-auto">
+                <div className="bg-purple-50 border border-purple-200 p-4 rounded-2xl text-center space-y-2">
+                  <div className="w-10 h-10 bg-[#7C3AED] text-white rounded-full flex items-center justify-center mx-auto shadow-sm">
                     <Check className="w-6 h-6" />
                   </div>
-                  <h4 className="font-bold text-[#1D1A23] text-sm">
+                  <h4 className="font-bold text-[#1E1B4B] text-sm">
                     {lang === 'ar' ? 'تم إرسال رابط إعادة التعيين!' : 'Reset Link Sent!'}
                   </h4>
-                  <p className="text-xs text-[#494454] font-semibold">
+                  <p className="text-xs text-slate-500 font-semibold">
                     {lang === 'ar' ? 'يرجى التحقق من بريدك الإلكتروني وتتبع التعليمات.' : 'Check your inbox for further instructions.'}
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleResetSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#1D1A23] mb-1.5">
+                    <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                       {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
                     </label>
                     <div className="relative">
@@ -218,18 +219,18 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="hello@example.com"
-                        className="w-full h-14 pl-10 pr-4 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
+                        className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                       />
-                      <Mail className="w-5 h-5 text-[#CBC3D7] absolute left-3.5 top-4" />
+                      <Mail className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full h-14 bg-gradient-to-r from-[#6B38D4] to-[#8B5CF6] text-white rounded-2xl text-base font-bold shadow-md hover:shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2"
+                    className="w-full h-14 bg-gradient-to-r from-[#6366F1] via-[#7C3AED] to-[#06B6D4] text-white rounded-2xl text-base font-bold shadow-[0_10px_25px_-5px_rgba(99,102,241,0.35)] hover:shadow-xl active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>{lang === 'ar' ? 'إرسال رابط التعيين' : 'Send Reset Link'}</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
                   </button>
                 </form>
               )}
@@ -237,7 +238,7 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
 
             <button
               onClick={() => setLoginMode('email')}
-              className="text-xs font-bold text-[#6B38D4] hover:underline"
+              className="text-xs font-bold text-[#7C3AED] hover:underline cursor-pointer"
             >
               {lang === 'ar' ? '← العودة لتسجيل الدخول' : '← Back to Login'}
             </button>
@@ -246,6 +247,12 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
         )}
 
       </div>
+
+      <footer className="w-full text-center relative z-20 pb-3 pt-2">
+        <p className="text-xs text-purple-900/60 font-medium">
+          {lang === 'ar' ? 'منصة لوبلي • حماية وخصوصية تامة' : 'Looply Platform • Safe & Private'}
+        </p>
+      </footer>
     </div>
   );
 }
@@ -253,6 +260,7 @@ export function Login({ onLogin, onNavigate }: AuthProps) {
 export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) => void }) {
   const { setParentProfile } = useSharedData() as any;
   const { lang, setLang } = useLanguage();
+  const isRTL = lang === 'ar';
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -304,37 +312,38 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F1FE] text-[#1D1A23] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden font-sans">
+    <div className={`min-h-screen bg-pastel-canvas text-[#1E1B4B] flex flex-col justify-between items-center p-4 sm:p-6 relative overflow-x-hidden font-sans ${isRTL ? 'rtl' : 'ltr'}`}>
       {/* Ambient Decorative Glows */}
-      <div className="absolute top-[-50px] left-[-50px] w-64 h-64 bg-[#E9DDFF] rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-      <div className="absolute bottom-[5%] right-[5%] w-80 h-80 bg-[#C9E6FF] rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-500/[0.12] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-400/[0.08] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#7C3AED_0.75px,transparent_0.75px)] [background-size:28px_28px] opacity-10 pointer-events-none" />
 
       {/* Top Navigation Bar */}
-      <div className="w-full max-w-lg flex justify-between items-center mb-4 relative z-10">
+      <div className="w-full max-w-lg flex justify-between items-center z-10 pt-2">
         <button 
           onClick={() => onNavigate('login')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/80 border border-[#6B38D4]/10 text-xs font-bold text-[#6B38D4] hover:bg-white transition-all shadow-xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-purple-100/80 text-xs font-bold text-[#7C3AED] hover:bg-white transition-all shadow-xs cursor-pointer"
         >
-          <ChevronLeft className="w-4 h-4" />
+          {isRTL ? <ChevronLeft className="w-4 h-4 rotate-180" /> : <ChevronLeft className="w-4 h-4" />}
           <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Log in'}</span>
         </button>
 
         <button 
           type="button"
           onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-white border border-[#6B38D4]/20 text-[#6B38D4] font-extrabold text-xs shadow-xs hover:bg-[#F3EBF8] transition-all"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-white/90 border border-purple-100/80 text-[#7C3AED] font-extrabold text-xs shadow-xs hover:bg-purple-50 transition-all cursor-pointer"
         >
-          <Globe className="w-4 h-4 text-[#6B38D4]" />
+          <Globe className="w-4 h-4 text-[#7C3AED]" />
           <span>{lang === 'en' ? 'العربية' : 'English'}</span>
         </button>
       </div>
 
       {/* Main Form Box */}
-      <div className="w-full max-w-lg relative z-10 animate-fade-in space-y-6">
+      <div className="w-full max-w-lg relative z-10 animate-fade-in space-y-6 my-auto py-4">
         
         {/* Waving Mascot Image Header */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_8px_20px_rgba(107,56,212,0.15)] border-2 border-white flex items-center justify-center overflow-hidden mb-2">
+          <div className="w-24 h-24 rounded-full p-2 bg-white shadow-[0_12px_32px_rgba(124,58,237,0.15)] border-2 border-purple-100 flex items-center justify-center overflow-hidden mb-2">
             <img 
               src="/mascot_waving.png" 
               alt="Purple Mascot" 
@@ -346,17 +355,17 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
 
         {/* Title Header */}
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-black text-[#1D1A23]">
+          <h1 className="text-3xl font-extrabold text-[#1E1B4B]">
             {lang === 'ar' ? 'إنشاء حساب جديد' : 'Create an Account'}
           </h1>
-          <p className="text-base font-normal text-[#494454]">
+          <p className="text-sm font-medium text-slate-500">
             {lang === 'ar' ? 'انضم إلى مجتمعنا الداعم اليوم.' : 'Join our supportive community today.'}
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-[24px] p-6 sm:p-8 shadow-[0_8px_20px_rgba(107,56,212,0.12)] border border-[#E9DDFF] space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-purple-100 space-y-6 shadow-[0_12px_32px_-4px_rgba(124,58,237,0.08)] text-left rtl:text-right">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {authError && (
               <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-extrabold flex items-center gap-2">
                 ⚠️ <span>{authError}</span>
@@ -365,7 +374,7 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
             
             {/* Input: Full Name */}
             <div>
-              <label className="block text-xs font-semibold text-[#494454] mb-1">
+              <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                 {lang === 'ar' ? 'الاسم الكامل' : 'Full Name'}
               </label>
               <div className="relative">
@@ -375,15 +384,15 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                   value={formData.fullName}
                   onChange={e => setFormData({...formData, fullName: e.target.value})}
                   placeholder="Adam Smith"
-                  className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
+                  className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                 />
-                <UserIcon className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
+                <UserIcon className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
               </div>
             </div>
 
             {/* Input: Email Address */}
             <div>
-              <label className="block text-xs font-semibold text-[#494454] mb-1">
+              <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                 {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
               </label>
               <div className="relative">
@@ -393,16 +402,16 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                   value={formData.email}
                   onChange={e => setFormData({...formData, email: e.target.value})}
                   placeholder="adam@example.com"
-                  className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
+                  className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                 />
-                <Mail className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
+                <Mail className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
               </div>
             </div>
 
             {/* Grid Inputs: Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
+                <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                   {lang === 'ar' ? 'كلمة المرور' : 'Password'}
                 </label>
                 <div className="relative">
@@ -412,12 +421,12 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                     value={formData.password}
                     onChange={e => setFormData({...formData, password: e.target.value})}
                     placeholder="••••••••"
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
+                    className="w-full h-14 pl-4 pr-10 rtl:pr-4 rtl:pl-10 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-4 text-[#CBC3D7] hover:text-[#6B38D4]"
+                    className="absolute right-3.5 rtl:left-3.5 rtl:right-auto top-4.5 text-slate-400 hover:text-[#7C3AED] cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -425,7 +434,7 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#494454] mb-1">
+                <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                   {lang === 'ar' ? 'تأكيد كلمة المرور' : 'Confirm Password'}
                 </label>
                 <div className="relative">
@@ -435,16 +444,16 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                     value={formData.confirmPassword}
                     onChange={e => setFormData({...formData, confirmPassword: e.target.value})}
                     placeholder="••••••••"
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-base font-medium border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none placeholder-[#CBC3D7]"
+                    className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                   />
-                  <Lock className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
+                  <Lock className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
                 </div>
               </div>
             </div>
 
             {/* Phone Number */}
             <div>
-              <label className="block text-xs font-semibold text-[#494454] mb-1">
+              <label className="block text-xs font-bold text-[#1E1B4B] mb-1.5">
                 {lang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
               </label>
               <div className="relative">
@@ -454,32 +463,32 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                   value={formData.phone}
                   onChange={e => setFormData({...formData, phone: e.target.value})}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full h-14 pl-4 pr-10 rounded-2xl bg-[#F3EBF8] text-[#1D1A23] text-sm font-semibold border border-transparent focus:border-[#6B38D4] focus:bg-white transition-all outline-none"
+                  className="w-full h-14 pl-11 pr-4 rtl:pr-11 rtl:pl-4 rounded-2xl bg-slate-50 text-slate-800 text-sm font-semibold border border-slate-200 focus:border-[#7C3AED] focus:ring-4 focus:ring-purple-100 focus:bg-white transition-all outline-none placeholder-slate-400"
                 />
-                <Phone className="w-5 h-5 text-[#CBC3D7] absolute right-3.5 top-4" />
+                <Phone className="w-5 h-5 text-purple-400 absolute left-3.5 rtl:right-3.5 rtl:left-auto top-4.5" />
               </div>
             </div>
 
             {/* National ID Upload */}
-            <div className="p-4 rounded-2xl border space-y-3 bg-[#F8F1FE]/50 border-[#E9DDFF]">
+            <div className="p-4 rounded-2xl border space-y-3 bg-purple-50/40 border-purple-100">
               <div className="flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#6B38D4]" />
-                <label className="block text-xs font-bold text-[#1D1A23]">
+                <CreditCard className="w-4 h-4 text-[#7C3AED]" />
+                <label className="block text-xs font-bold text-[#1E1B4B]">
                   {lang === 'ar' ? 'صورة البطاقة الشخصية' : 'National ID Card Photo'}
                 </label>
               </div>
               
               <div className="flex items-center gap-4">
-                <label className="flex-1 border-2 border-dashed border-[#6B38D4]/30 rounded-2xl p-4 bg-white text-center cursor-pointer hover:bg-[#F3EBF8] transition-colors flex flex-col items-center justify-center gap-1">
-                  <Upload className="w-5 h-5 text-[#6B38D4]" />
-                  <span className="text-xs font-extrabold text-[#6B38D4]">
+                <label className="flex-1 border-2 border-dashed border-purple-200 rounded-2xl p-4 bg-white text-center cursor-pointer hover:bg-purple-50 transition-colors flex flex-col items-center justify-center gap-1">
+                  <Upload className="w-5 h-5 text-[#7C3AED]" />
+                  <span className="text-xs font-extrabold text-[#7C3AED]">
                     {lang === 'ar' ? 'رفع صورة البطاقة' : 'Upload ID Image'}
                   </span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleIdCardUpload} />
                 </label>
 
                 {formData.idCardPhoto && (
-                  <div className="relative w-16 h-16 rounded-2xl border border-[#6B38D4] overflow-hidden shrink-0 shadow-xs">
+                  <div className="relative w-16 h-16 rounded-2xl border border-purple-300 overflow-hidden shrink-0 shadow-xs">
                     <img src={formData.idCardPhoto} alt="ID Preview" className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -487,11 +496,11 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
             </div>
 
             {/* Face Recognition Feature Setup */}
-            <div className="p-4 rounded-2xl border space-y-2 bg-[#F8F1FE]/50 border-[#E9DDFF]">
+            <div className="p-4 rounded-2xl border space-y-2 bg-purple-50/40 border-purple-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#6B38D4]" />
-                  <label className="block text-xs font-bold text-[#1D1A23]">
+                  <Shield className="w-4 h-4 text-[#7C3AED]" />
+                  <label className="block text-xs font-bold text-[#1E1B4B]">
                     👤 {lang === 'ar' ? 'تفعيل بصمة الوجه (Face Recognition)' : 'Face Recognition Security'}
                   </label>
                 </div>
@@ -502,7 +511,7 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
                     onChange={(e) => setFormData(prev => ({ ...prev, faceAuthEnabled: e.target.checked }))} 
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-[#CBC3D7] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#6B38D4]"></div>
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#7C3AED]"></div>
                 </label>
               </div>
             </div>
@@ -510,20 +519,20 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
             {/* Primary Action Button */}
             <button 
               type="submit"
-              className="w-full h-16 bg-[#6B38D4] text-white font-bold rounded-2xl text-xl shadow-[0_8px_20px_rgba(107,56,212,0.24)] hover:bg-[#582cb5] active:scale-98 transition-all flex items-center justify-center gap-3"
+              className="w-full h-14 bg-gradient-to-r from-[#6366F1] via-[#7C3AED] to-[#06B6D4] text-white font-bold rounded-2xl text-lg shadow-[0_10px_25px_-5px_rgba(99,102,241,0.35)] hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-3 cursor-pointer mt-2"
             >
               <span>{lang === 'ar' ? 'تسجيل الحساب' : 'Register'}</span>
-              <ArrowRight className="w-6 h-6" />
+              <ArrowRight className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
             </button>
           </form>
 
           {/* Bottom Switch Footer */}
           <div className="text-center pt-2">
-            <p className="text-base font-normal text-[#494454]">
+            <p className="text-sm font-normal text-slate-500">
               {lang === 'ar' ? 'لديك حساب بالفعل؟ ' : 'Already have an account? '}
               <button 
                 onClick={() => onNavigate('login')} 
-                className="font-bold text-[#6B38D4] hover:underline"
+                className="font-bold text-[#7C3AED] hover:underline cursor-pointer"
               >
                 {lang === 'ar' ? 'تسجيل الدخول' : 'Log in'}
               </button>
@@ -531,6 +540,12 @@ export function CreateAccount({ onNavigate }: { onNavigate: (view: ViewState) =>
           </div>
         </div>
       </div>
+
+      <footer className="w-full text-center relative z-20 pb-3 pt-2">
+        <p className="text-xs text-purple-900/60 font-medium">
+          {lang === 'ar' ? 'منصة لوبلي • حماية وخصوصية تامة' : 'Looply Platform • Safe & Private'}
+        </p>
+      </footer>
     </div>
   );
 }
